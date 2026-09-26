@@ -9,21 +9,15 @@
 :root {
     --orange: #f97316;
     --orange-dark: #ea580c;
-    --orange-light: #fb923c;
-
     --light-blue: #7dd3fc;
     --blue: #38bdf8;
 
     --white: #ffffff;
     --text: #172033;
     --muted: #64748b;
-
-    --card: #ffffff;
 }
 
-/* =========================
-   PAGE
-========================= */
+/* PAGE */
 
 body {
     font-family: Arial, sans-serif;
@@ -47,6 +41,7 @@ body {
 
 body::before {
     content: "";
+
     position: fixed;
 
     left: -10%;
@@ -64,6 +59,7 @@ body::before {
 
 body::after {
     content: "";
+
     position: fixed;
 
     left: -10%;
@@ -79,41 +75,54 @@ body::after {
     z-index: -3;
 }
 
-/* =========================
-   NAVBAR
-========================= */
+
+/* NAVBAR */
 
 .navbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 
-    padding: 18px 40px;
+    gap: 25px;
+
+    padding: 15px 30px;
 
     background: rgba(255, 255, 255, 0.95);
 
     position: sticky;
     top: 0;
+
     z-index: 100;
 
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
 }
 
+
 /* LOGO\NAME */
 
 .logo {
     font-size: 24px;
+
     font-weight: bold;
+
     color: var(--orange-dark);
+
+    white-space: nowrap;
 }
+
+
+/* NAVIGATION */
 
 .nav-links {
     display: flex;
+
     gap: 8px;
+
+    white-space: nowrap;
 }
 
 .nav-links a {
     color: var(--text);
+
     text-decoration: none;
 
     padding: 10px 14px;
@@ -125,21 +134,73 @@ body::after {
 
 .nav-links a:hover {
     background: var(--light-blue);
+
     color: #075985;
 }
 
-/* =========================
-   AD SLOTS
-========================= */
+
+/* SEARCH BAR */
+
+.search-box {
+    flex: 1;
+
+    display: flex;
+
+    background: white;
+
+    border: 1px solid #cbd5e1;
+
+    padding: 5px;
+
+    border-radius: 10px;
+}
+
+.search-box input {
+    flex: 1;
+
+    border: none;
+
+    outline: none;
+
+    padding: 11px;
+
+    font-size: 16px;
+}
+
+.search-box button {
+    border: none;
+
+    background: var(--orange);
+
+    color: white;
+
+    padding: 0 20px;
+
+    border-radius: 7px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.search-box button:hover {
+    background: var(--orange-dark);
+}
+
+
+/* AD SLOTS */
 
 .ad-slot {
     width: min(90%, 1000px);
+
     min-height: 90px;
 
     margin: 25px auto;
 
     display: flex;
+
     justify-content: center;
+
     align-items: center;
 
     background: rgba(255, 255, 255, 0.75);
@@ -151,6 +212,7 @@ body::after {
     color: #075985;
 
     font-size: 14px;
+
     font-weight: bold;
 }
 
@@ -160,107 +222,44 @@ body::after {
 
 .middle-ad {
     margin-top: 45px;
+
     margin-bottom: 45px;
 }
 
-/* =========================
-   STORE HEADER
-========================= */
 
-.store-header {
+/* PRODUCTS BOX */
+
+.products-box {
+    width: min(92%, 1150px);
+
+    margin: 50px auto;
+
+    padding: 40px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.18);
+
     text-align: center;
-
-    padding: 55px 20px 35px;
 }
 
-.store-header h1 {
-    color: white;
-
-    font-size: 46px;
+.products-box h1 {
+    font-size: 36px;
 
     margin-bottom: 10px;
 }
 
-.store-header p {
-    color: white;
+.products-box > p {
+    color: var(--muted);
 
-    font-size: 19px;
-
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
-/* =========================
-   SEARCH
-========================= */
 
-.search-box {
-    width: min(90%, 650px);
-
-    margin: auto;
-
-    display: flex;
-
-    background: white;
-
-    padding: 6px;
-
-    border-radius: 12px;
-
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.18);
-}
-
-.search-box input {
-    flex: 1;
-
-    border: none;
-    outline: none;
-
-    padding: 13px;
-
-    font-size: 16px;
-
-    border-radius: 8px;
-}
-
-.search-box button {
-    border: none;
-
-    background: var(--orange-dark);
-
-    color: white;
-
-    padding: 0 22px;
-
-    border-radius: 8px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-.search-box button:hover {
-    background: #c2410c;
-}
-
-/* =========================
-   PRODUCTS
-========================= */
-
-.products-section {
-    width: min(92%, 1100px);
-
-    margin: 20px auto 0;
-}
-
-.products-section h2 {
-    color: white;
-
-    text-align: center;
-
-    font-size: 32px;
-
-    margin-bottom: 25px;
-}
+/* PRODUCTS GRID */
 
 .product-grid {
     display: grid;
@@ -271,15 +270,18 @@ body::after {
     gap: 22px;
 }
 
+
+/* PRODUCT CARD */
+
 .product-card {
-    background: var(--card);
+    background: white;
 
     padding: 20px;
 
     border-radius: 15px;
 
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.18);
+        0 5px 18px rgba(0, 0, 0, 0.12);
 
     transition: transform 0.2s;
 }
@@ -287,6 +289,9 @@ body::after {
 .product-card:hover {
     transform: translateY(-4px);
 }
+
+
+/* PRODUCT IMAGE */
 
 .product-image {
     height: 150px;
@@ -296,13 +301,18 @@ body::after {
     border-radius: 10px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     color: #0369a1;
 
     margin-bottom: 18px;
 }
+
+
+/* PRODUCT TEXT */
 
 .product-card h3 {
     margin-bottom: 8px;
@@ -321,6 +331,9 @@ body::after {
 
     margin-bottom: 15px;
 }
+
+
+/* PRODUCT BUTTON */
 
 .product-card button {
     width: 100%;
@@ -344,25 +357,23 @@ body::after {
     background: var(--orange-dark);
 }
 
-/* =========================
-   NO SEARCH RESULTS
-========================= */
+
+/* NO RESULTS */
 
 .no-results {
     display: none;
 
     text-align: center;
 
-    color: white;
+    color: var(--muted);
 
     font-size: 18px;
 
     padding: 30px;
 }
 
-/* =========================
-   CART / ABOUT / TERMS
-========================= */
+
+/* CART / ABOUT / TERMS */
 
 .cart,
 .about,
@@ -400,17 +411,15 @@ body::after {
     margin: 25px 0 15px;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+
+/* BUTTONS */
 
 button {
     cursor: pointer;
 }
 
-/* =========================
-   MOBILE
-========================= */
+
+/* MOBILE */
 
 @media (max-width: 700px) {
 
@@ -422,24 +431,21 @@ button {
         gap: 12px;
     }
 
+    .search-box {
+        width: 100%;
+    }
+
     .nav-links {
         flex-wrap: wrap;
 
         justify-content: center;
     }
 
-    .store-header h1 {
-        font-size: 36px;
+    .products-box {
+        padding: 25px 15px;
     }
 
-    .search-box {
-        flex-direction: column;
-
-        gap: 6px;
+    .products-box h1 {
+        font-size: 30px;
     }
-
-    .search-box button {
-        padding: 12px;
-    }
-
 }
