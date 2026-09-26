@@ -462,179 +462,121 @@ body {
 ========================================= */
 
 .login-overlay {
-
     position: fixed;
-
     inset: 0;
 
-    z-index: 1000;
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
 
     background: rgba(0, 0, 0, 0.65);
 
-    backdrop-filter: blur(6px);
-
+    z-index: 1000;
 }
 
 
 .login-popup {
+    width: 320px;
 
-    position: relative;
-
-    width: min(90%, 430px);
-
-    padding: 40px;
+    padding: 25px;
 
     background: white;
 
-    border-radius: 28px;
+    border-radius: 20px;
+
+    text-align: center;
 
     box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.35),
-        0 0 30px rgba(56, 189, 248, 0.35);
-
+        0 15px 40px rgba(0, 0, 0, 0.35);
 }
 
 
 .login-popup h1 {
-
-    text-align: center;
-
-    color: #075985;
-
     margin-bottom: 8px;
 
+    color: #075985;
 }
 
 
 .login-subtitle {
-
-    text-align: center;
-
     color: var(--muted);
 
-    margin-bottom: 28px;
-
-}
-
-
-.login-close {
-
-    position: absolute;
-
-    top: 12px;
-
-    right: 15px;
-
-    width: 35px;
-
-    height: 35px;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: #e2e8f0;
-
-    color: #172033;
-
-    font-size: 25px;
-
-    cursor: pointer;
-
-}
-
-
-.login-close:hover {
-
-    background: #bae6fd;
-
+    margin-bottom: 20px;
 }
 
 
 #loginForm {
-
     display: flex;
 
     flex-direction: column;
 
-    gap: 10px;
+    align-items: center;
 
+    gap: 8px;
 }
 
 
 #loginForm label {
+    width: 100%;
+
+    text-align: center;
 
     font-weight: bold;
 
-    margin-top: 8px;
-
+    margin-top: 5px;
 }
 
 
 #loginForm input {
+    width: 90%;
 
-    padding: 13px;
+    padding: 10px;
 
     border: 2px solid #dbeafe;
 
-    border-radius: 12px;
+    border-radius: 10px;
+
+    text-align: center;
 
     outline: none;
-
-    font-size: 15px;
-
-}
-
-
-#loginForm input:focus {
-
-    border-color: var(--blue);
-
 }
 
 
 .login-button {
+    margin-top: 12px;
 
-    margin-top: 18px;
-
-    padding: 13px;
+    padding: 10px 30px;
 
     border: none;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
     background: var(--orange);
 
     color: white;
 
-    font-size: 16px;
-
     font-weight: bold;
 
     cursor: pointer;
-
 }
 
 
 .login-button:hover {
-
     background: var(--orange-dark);
-
 }
 
 
-#loginMessage {
+.login-close {
+    position: absolute;
 
-    text-align: center;
+    top: 12px;
+    right: 15px;
 
-    margin-top: 18px;
+    border: none;
 
-    font-weight: bold;
+    background: transparent;
 
+    font-size: 25px;
+
+    cursor: pointer;
 }
