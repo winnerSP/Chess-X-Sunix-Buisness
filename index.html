@@ -10,7 +10,16 @@
 <nav class="navbar">
 
     <!-- LOGO\NAME -->
-    <div class="logo">Tim Da Artiste</div>
+    <div class="logo">LOGO\NAME</div>
+
+    <div class="search-box">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search products..."
+        >
+        <button onclick="searchProducts()">Search</button>
+    </div>
 
     <div class="nav-links">
         <a href="index.html">Home</a>
@@ -27,62 +36,62 @@
 
 <main>
 
-    <section class="store-header">
-        <h1>Welcome to <!-- LOGO\NAME --></h1>
+    <section class="products-box">
+
+        <h1>Products You Would Like</h1>
+
         <p>Find something you like!</p>
-
-        <div class="search-box">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search products..."
-            >
-            <button onclick="searchProducts()">Search</button>
-        </div>
-    </section>
-
-    <!-- PRODUCTS ARE SHOWN DIRECTLY ON HOME -->
-
-    <section class="products-section">
-
-        <h2>Our Products</h2>
 
         <div class="product-grid" id="productGrid">
 
             <div class="product-card" data-name="Product One">
+
                 <div class="product-image">
                     Product Image
                 </div>
 
                 <h3>Product One</h3>
+
                 <p>Product description goes here.</p>
+
                 <strong>₹999</strong>
 
                 <button>Add to Cart</button>
+
             </div>
 
+
             <div class="product-card" data-name="Product Two">
+
                 <div class="product-image">
                     Product Image
                 </div>
 
                 <h3>Product Two</h3>
+
                 <p>Product description goes here.</p>
+
                 <strong>₹799</strong>
 
                 <button>Add to Cart</button>
+
             </div>
 
+
             <div class="product-card" data-name="Product Three">
+
                 <div class="product-image">
                     Product Image
                 </div>
 
                 <h3>Product Three</h3>
+
                 <p>Product description goes here.</p>
+
                 <strong>₹499</strong>
 
                 <button>Add to Cart</button>
+
             </div>
 
         </div>
@@ -100,6 +109,7 @@
 
 </main>
 
+
 <script>
 
 function searchProducts() {
@@ -110,6 +120,7 @@ function searchProducts() {
         .toLowerCase();
 
     const products = document.querySelectorAll(".product-card");
+
     let found = false;
 
     products.forEach(function(product) {
@@ -119,10 +130,14 @@ function searchProducts() {
             .toLowerCase();
 
         if (name.includes(search)) {
+
             product.style.display = "block";
             found = true;
+
         } else {
+
             product.style.display = "none";
+
         }
 
     });
@@ -130,6 +145,7 @@ function searchProducts() {
     document.getElementById("noResults").style.display =
         found ? "none" : "block";
 }
+
 
 document
     .getElementById("searchInput")
