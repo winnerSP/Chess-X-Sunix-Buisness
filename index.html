@@ -1,40 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
     <title><!-- LOGO\NAME --></title>
+
     <link rel="stylesheet" href="style.css">
+
 </head>
 
+
 <body>
+
 
 <nav class="navbar">
 
     <!-- LOGO\NAME -->
     <div class="logo">LOGO\NAME</div>
 
+
     <div class="search-box">
+
         <input
             type="text"
             id="searchInput"
             placeholder="Search products..."
         >
-        <button onclick="searchProducts()">Search</button>
+
+        <button onclick="runStoreSearch()">
+            Search
+        </button>
+
     </div>
 
+
     <div class="nav-links">
+
         <a href="index.html">Home</a>
+
         <a href="cart.html">Cart</a>
+
         <a href="login.html">Login</a>
+
         <a href="about.html">About</a>
+
     </div>
 
 </nav>
 
 
+
 <main>
 
+
     <!-- RANDOM ADVERTISEMENT -->
+
     <div id="randomAd" class="ad-slot"></div>
+
 
 
     <!-- MAIN TITLE -->
@@ -52,32 +74,53 @@
     </section>
 
 
+
     <!-- PRODUCTS -->
 
     <section class="products-container">
 
-        <div class="product-grid" id="productGrid">
+        <div
+            class="product-grid"
+            id="productGrid"
+        >
 
 
-            <div class="product-card" data-name="Product One" data-price="999">
+            <!-- PRODUCT ONE -->
+
+            <div
+                class="product-card"
+                data-name="Product One"
+                data-price="999"
+            >
 
                 <div class="product-image">
+
                     Product Image
+
                 </div>
+
 
                 <h2>Product One</h2>
 
-                <p>Product description goes here.</p>
+                <p>
+                    Product description goes here.
+                </p>
 
                 <strong>₹999</strong>
 
+
                 <div class="product-buttons">
 
-                    <button onclick="addToCart('Product One', 999)">
+                    <button
+                        onclick="addToCart('Product One', 999)"
+                    >
                         Add to Cart
                     </button>
 
-                    <button onclick="buyNow('Product One', 999)">
+
+                    <button
+                        onclick="buyNow('Product One', 999)"
+                    >
                         Buy Now
                     </button>
 
@@ -86,25 +129,43 @@
             </div>
 
 
-            <div class="product-card" data-name="Product Two" data-price="799">
+
+            <!-- PRODUCT TWO -->
+
+            <div
+                class="product-card"
+                data-name="Product Two"
+                data-price="799"
+            >
 
                 <div class="product-image">
+
                     Product Image
+
                 </div>
+
 
                 <h2>Product Two</h2>
 
-                <p>Product description goes here.</p>
+                <p>
+                    Product description goes here.
+                </p>
 
                 <strong>₹799</strong>
 
+
                 <div class="product-buttons">
 
-                    <button onclick="addToCart('Product Two', 799)">
+                    <button
+                        onclick="addToCart('Product Two', 799)"
+                    >
                         Add to Cart
                     </button>
 
-                    <button onclick="buyNow('Product Two', 799)">
+
+                    <button
+                        onclick="buyNow('Product Two', 799)"
+                    >
                         Buy Now
                     </button>
 
@@ -113,25 +174,43 @@
             </div>
 
 
-            <div class="product-card" data-name="Product Three" data-price="499">
+
+            <!-- PRODUCT THREE -->
+
+            <div
+                class="product-card"
+                data-name="Product Three"
+                data-price="499"
+            >
 
                 <div class="product-image">
+
                     Product Image
+
                 </div>
+
 
                 <h2>Product Three</h2>
 
-                <p>Product description goes here.</p>
+                <p>
+                    Product description goes here.
+                </p>
 
                 <strong>₹499</strong>
 
+
                 <div class="product-buttons">
 
-                    <button onclick="addToCart('Product Three', 499)">
+                    <button
+                        onclick="addToCart('Product Three', 499)"
+                    >
                         Add to Cart
                     </button>
 
-                    <button onclick="buyNow('Product Three', 499)">
+
+                    <button
+                        onclick="buyNow('Product Three', 499)"
+                    >
                         Buy Now
                     </button>
 
@@ -142,16 +221,35 @@
 
         </div>
 
-        <p id="noResults" class="no-results">
+
+
+        <!-- NO SEARCH RESULTS -->
+
+        <p
+            id="noResults"
+            class="no-results"
+        >
             No products found.
         </p>
 
     </section>
 
+
 </main>
 
 
+
+<!-- =========================================
+     WEBSITE 2.0 FILES
+========================================= -->
+
+<script src="SearchEngine.js"></script>
+
+<script src="AISearch.js"></script>
+
 <script src="script.js"></script>
 
+
 </body>
+
 </html>
