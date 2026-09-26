@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Login - <!-- LOGO\NAME --></title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- STORE PAGE BEHIND LOGIN -->
+
+<nav class="navbar">
+
+    <!-- LOGO\NAME -->
+    <div class="logo">LOGO\NAME</div>
+
+    <div class="nav-links">
+
+        <a href="index.html">Home</a>
+        <a href="cart.html">Cart</a>
+        <a href="login.html">Login</a>
+        <a href="about.html">About</a>
+
+    </div>
+
+</nav>
+
+
+<main>
+
+    <section class="title-section">
+
+        <div class="title-bubble">
+
+            <h1>Products You Would Like</h1>
+
+            <p>Find something you like!</p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================
+     LOGIN OVERLAY
+========================================= -->
+
+<div class="login-overlay">
+
+
+    <div class="login-popup">
+
+
+        <!-- CLOSE -->
+
+        <button
+            class="login-close"
+            onclick="window.location.href='index.html'"
+        >
+            ×
+        </button>
+
+
+
+        <h1>Login</h1>
+
+        <p class="login-subtitle">
+            Log in to your account
+        </p>
+
+
+
+        <form id="loginForm">
+
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Enter username"
+                required
+            >
+
+
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                required
+            >
+
+
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Login
+            </button>
+
+
+        </form>
+
+
+        <p id="loginMessage"></p>
+
+
+    </div>
+
+</div>
+
+
+
+<script src="Database_Admin.js"></script>
+
+
+<script>
+
+const loginForm =
+    document.getElementById("loginForm");
+
+
+loginForm.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const username =
+            document.getElementById(
+                "username"
+            ).value.trim();
+
+
+        const password =
+            document.getElementById(
+                "password"
+            ).value;
+
+
+        const message =
+            document.getElementById(
+                "loginMessage"
+            );
+
+
+        const user =
+            findUser(username);
+
+
+        if (!user) {
+
+            message.textContent =
+                "User not found.";
+
+            return;
+
+        }
+
+
+        if (
+            user.password_hash !==
+            password
+        ) {
+
+            message.textContent =
+                "Incorrect password.";
+
+            return;
+
+        }
+
+
+        localStorage.setItem(
+            "loggedInUser",
+            JSON.stringify(user)
+        );
+
+
+        if (user.isBusiness) {
+
+            message.textContent =
+                "Business account logged in!";
+
+        } else {
+
+            message.textContent =
+                "Login successful!";
+
+        }
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
