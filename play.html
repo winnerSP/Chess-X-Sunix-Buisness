@@ -7,97 +7,165 @@
 
     <title>Play Chess — CHESS X SUNIX</title>
 
+    <!-- Main website styling -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Chess board styling -->
     <link rel="stylesheet" href="chess.css">
 </head>
 
 <body>
 
-<nav class="navbar">
+    <!-- NAVIGATION -->
+    <nav class="navbar">
 
-    <div class="logo">
-        CHESS X SUNIX
-    </div>
+        <div class="logo">
+            CHESS X SUNIX
+        </div>
 
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="play.html">Play</a>
-        <a href="puzzles.html">Puzzles</a>
-        <a href="learn.html">Learn</a>
-        <a href="tournaments.html">Tournaments</a>
-        <a href="leaderboard.html">Leaderboard</a>
-        <a href="login.html">Login</a>
-    </div>
+        <div class="nav-links">
 
-</nav>
+            <a href="index.html">Home</a>
 
+            <a href="play.html">Play</a>
 
-<main class="chess-page">
+            <a href="puzzles.html">Puzzles</a>
 
-    <section class="game-menu">
+            <a href="learn.html">Learn</a>
 
-        <h1>Play Chess</h1>
+            <a href="tournaments.html">Tournaments</a>
 
-        <p>Choose your opponent.</p>
+            <a href="leaderboard.html">Leaderboard</a>
 
-        <div class="game-buttons">
-
-            <button onclick="startBotGame(800)">
-                🤖 Bot — 800
-            </button>
-
-            <button onclick="startBotGame(1000)">
-                🤖 Bot — 1000
-            </button>
-
-            <button onclick="startBotGame(1200)">
-                🤖 Bot — 1200
-            </button>
-
-            <button onclick="startBotGame(1500)">
-                🤖 Bot — 1500
-            </button>
+            <a href="login.html">Login</a>
 
         </div>
 
-    </section>
+    </nav>
 
 
-    <section class="board-area">
-
-        <div id="black-info">
-            Black
-        </div>
-
-        <div id="chess-board"></div>
-
-        <div id="white-info">
-            White
-        </div>
-
-        <p id="game-status">
-            Choose a game to begin.
-        </p>
-
-    </section>
-
-</main>
+    <!-- MAIN CHESS PAGE -->
+    <main class="chess-page">
 
 
-<script src="storage.js"></script>
-<script src="auth.js"></script>
-<script src="rating.js"></script>
-<script src="chess.js"></script>
-<script src="specialMoves.js"></script>
-<script src="engine.js"></script>
-<script src="legal.js"></script>
-<script src="board.js"></script>
-<script src="bots.js"></script>
-<script src="game.js"></script>
-<script src="play.js"></script>
+        <!-- GAME SELECTION -->
+        <section class="game-menu">
 
-</body>
-</html>
+            <h1>Play Chess</h1>
+
+            <p>
+                Choose your opponent.
+            </p>
+
+
+            <div class="game-buttons">
+
+                <button onclick="startBotGame(800)">
+                    🤖 Bot — 800
+                </button>
+
+                <button onclick="startBotGame(1000)">
+                    🤖 Bot — 1000
+                </button>
+
+                <button onclick="startBotGame(1200)">
+                    🤖 Bot — 1200
+                </button>
+
+                <button onclick="startBotGame(1500)">
+                    🤖 Bot — 1500
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHESS GAME -->
+        <section class="board-area">
+
+
+            <!-- BLACK PLAYER -->
+            <div id="black-info">
+                Black
+            </div>
+
+
+            <!-- CHESS BOARD -->
+            <div id="chess-board"></div>
+
+
+            <!-- WHITE PLAYER -->
+            <div id="white-info">
+                White
+            </div>
+
+
+            <!-- GAME STATUS -->
+            <p id="game-status">
+                Choose a game to begin.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!--
+        ==========================================
+        CHESS X SUNIX JAVASCRIPT FILES
+        ==========================================
+    -->
+
+
+    <!-- Storage -->
+    <script src="storage.js"></script>
+
+
+    <!-- Authentication -->
+    <script src="auth.js"></script>
+
+
+    <!-- Rating system -->
+    <script src="rating.js"></script>
+
+
+    <!-- Chess core -->
+    <script src="chess.js"></script>
+
+
+    <!-- Promotion / En Passant / Castling -->
+    <script src="specialMoves.js"></script>
+
+
+    <!-- Actual move execution -->
+    <script src="move.js"></script>
+
+
+    <!-- Chess engine -->
+    <script src="engine.js"></script>
+
+
+    <!-- Legal move and check system -->
+    <script src="legal.js"></script>
+
+
+    <!-- Board renderer and controls -->
+    <script src="board.js"></script>
+
+
+    <!-- Bot system -->
+    <script src="bots.js"></script>
+
+
+    <!-- Game status -->
+    <script src="game.js"></script>
+
+
+    <!-- Play page -->
+    <script src="play.js"></script>
+
+
 </body>
 
 </html>
