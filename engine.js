@@ -1,7 +1,4 @@
-/* =========================================
-   CHESS X SUNIX ENGINE
-   MOVE GENERATION + SEARCH
-========================================= */
+// CHESS X SUNIX — Chess Engine
 
 const PIECE_VALUES = {
     pawn: 100,
@@ -13,29 +10,29 @@ const PIECE_VALUES = {
 };
 
 
-/* =========================================
-   GENERATE PSEUDO-LEGAL MOVES
-========================================= */
-
+// Generate pseudo-legal moves.
+// A king is NEVER a capturable target.
 function generateMoves(color) {
 
     const moves = [];
 
     for (let row = 0; row < 8; row++) {
-
         for (let col = 0; col < 8; col++) {
 
             const piece = boardState[row][col];
 
             if (!piece) continue;
-
-            if (pieceColor(piece) !== color) {
-                continue;
-            }
+            if (pieceColor(piece) !== color) continue;
 
             for (let toRow = 0; toRow < 8; toRow++) {
-
                 for (let toCol = 0; toCol < 8; toCol++) {
+
+                    const target = boardState[toRow][toCol];
+
+                    // Kings are never captured.
+                    if (target && pieceType(target) === "king") {
+                        continue;
+                    }
 
                     if (
                         isPseudoLegalMove(
@@ -45,14 +42,12 @@ function generateMoves(color) {
                             toCol
                         )
                     ) {
-
                         moves.push({
                             fromRow: row,
                             fromCol: col,
                             toRow: toRow,
                             toCol: toCol
                         });
-
                     }
                 }
             }
@@ -63,16 +58,11 @@ function generateMoves(color) {
 }
 
 
-/* =========================================
-   POSITION EVALUATION
-========================================= */
-
 function evaluatePosition() {
 
     let score = 0;
 
     for (let row = 0; row < 8; row++) {
-
         for (let col = 0; col < 8; col++) {
 
             const piece = boardState[row][col];
@@ -80,18 +70,12 @@ function evaluatePosition() {
             if (!piece) continue;
 
             const type = pieceType(piece);
-
-            const value =
-                PIECE_VALUES[type];
+            const value = PIECE_VALUES[type] || 0;
 
             if (pieceColor(piece) === WHITE) {
-
                 score += value;
-
             } else {
-
                 score -= value;
-
             }
         }
     }
@@ -100,93 +84,56 @@ function evaluatePosition() {
 }
 
 
-/* =========================================
-   COPY BOARD
-========================================= */
-
 function copyBoard() {
-
-    return boardState.map(
-        row => [...row]
-    );
+    return boardState.map(row => [...row]);
 }
 
 
-/* =========================================
-   TEST MOVE
-========================================= */
-
+// Temporarily make a move for engine calculation.
 function testMove(move) {
 
-    const oldBoard =
-        copyBoard();
+    const oldBoard = copyBoard();
 
-    const captured =
-        boardState[
-            move.toRow
-        ][
-            move.toCol
-        ];
+    boardState[move.toRow][move.toCol] =
+        boardState[move.fromRow][move.fromCol];
 
-    boardState[
-        move.toRow
-    ][
-        move.toCol
-    ] =
-        boardState[
-            move.fromRow
-        ][
-            move.fromCol
-        ];
-
-    boardState[
-        move.fromRow
-    ][
-        move.fromCol
-    ] = null;
+    boardState[move.fromRow][move.fromCol] = null;
 
     return {
-        oldBoard,
-        captured
+        oldBoard: oldBoard
     };
 }
 
 
-/* =========================================
-   UNDO TEST MOVE
-========================================= */
-
 function undoTest(state) {
-
-    boardState =
-        state.oldBoard;
+    boardState = state.oldBoard;
 }
 
 
-/* =========================================
-   MINIMAX
-========================================= */
-
+// Minimax searches ONLY legal moves.
 function minimax(depth, maximizing) {
 
     if (depth === 0) {
-
         return evaluatePosition();
-
     }
 
-    const color =
-        maximizing
-            ? WHITE
-            : BLACK;
+    const color = maximizing ? WHITE : BLACK;
 
-    const moves =
-        generateMoves(color);
+    const moves = generateLegalMoves(color);
 
+    // No legal moves.
     if (moves.length === 0) {
 
-        return evaluatePosition();
+        // Checkmate.
+        if (isKingInCheck(color)) {
 
+            return maximizing
+                ? -999999
+                : 999999;
+        }
+
+        // Stalemate.
+        return 0;
     }
 
 
@@ -196,22 +143,16 @@ function minimax(depth, maximizing) {
 
         for (const move of moves) {
 
-            const state =
-                testMove(move);
+            const state = testMove(move);
 
-            const score =
-                minimax(
-                    depth - 1,
-                    false
-                );
+            const score = minimax(
+                depth - 1,
+                false
+            );
 
             undoTest(state);
 
-            best =
-                Math.max(
-                    best,
-                    score
-                );
+            best = Math.max(best, score);
         }
 
         return best;
@@ -222,74 +163,51 @@ function minimax(depth, maximizing) {
 
     for (const move of moves) {
 
-        const state =
-            testMove(move);
+        const state = testMove(move);
 
-        const score =
-            minimax(
-                depth - 1,
-                true
-            );
+        const score = minimax(
+            depth - 1,
+            true
+        );
 
         undoTest(state);
 
-        best =
-            Math.min(
-                best,
-                score
-            );
+        best = Math.min(best, score);
     }
 
     return best;
 }
 
 
-/* =========================================
-   FIND BEST BLACK MOVE
-========================================= */
-
+// Find the best move for BLACK.
 function findBestMove(depth = 2) {
 
-    const moves =
-        generateMoves(BLACK);
+    const moves = generateLegalMoves(BLACK);
 
     if (moves.length === 0) {
-
         return null;
-
     }
 
-
-    let bestMove =
-        moves[0];
-
-    let bestScore =
-        Infinity;
-
+    let bestMove = moves[0];
+    let bestScore = Infinity;
 
     for (const move of moves) {
 
-        const state =
-            testMove(move);
+        const state = testMove(move);
 
-        const score =
-            minimax(
-                depth - 1,
-                true
-            );
+        const score = minimax(
+            depth - 1,
+            true
+        );
 
         undoTest(state);
-
 
         if (score < bestScore) {
 
             bestScore = score;
-
             bestMove = move;
-
         }
     }
-
 
     return bestMove;
 }
