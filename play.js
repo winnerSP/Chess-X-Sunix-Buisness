@@ -1,31 +1,25 @@
-let activeBotRating = null;
+/* =========================================
+   CHESS X SUNIX
+   PLAY CONTROLLER
+========================================= */
 
+let activeBotRating = null;
 
 function startBotGame(botRating) {
 
     activeBotRating = botRating;
 
-    resetBoard();
+    resetGame();
 
-    const status =
-        document.getElementById("game-status");
+    gameOver = false;
+    selectedSquare = null;
+
+    renderBoard();
+
+    const status = document.getElementById("game-status");
 
     if (status) {
-
         status.textContent =
-            "You are White. Bot rating: " +
-            botRating;
-
+            "You are White • Bot Rating: " + botRating;
     }
-
 }
-
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        createBoard();
-
-    }
-);
