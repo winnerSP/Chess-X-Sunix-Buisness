@@ -1,44 +1,75 @@
-let boardState = createStartingBoard();
+/* =========================================
+   CHESS X SUNIX
+   BOARD CONTROLLER
+========================================= */
+
 
 let selectedSquare = null;
 
-let currentTurn = "white";
 
+/* =========================================
+   CREATE BOARD
+========================================= */
 
 function createBoard(elementId = "chess-board") {
 
-    const board = document.getElementById(elementId);
+    const board =
+        document.getElementById(elementId);
 
     if (!board) {
         return;
     }
 
+
     board.innerHTML = "";
+
 
     for (let row = 0; row < 8; row++) {
 
         for (let col = 0; col < 8; col++) {
 
-            const square = document.createElement("div");
+            const square =
+                document.createElement("div");
 
             square.classList.add("square");
 
+
             if ((row + col) % 2 === 0) {
-                square.classList.add("light-square");
+
+                square.classList.add(
+                    "light-square"
+                );
+
             } else {
-                square.classList.add("dark-square");
+
+                square.classList.add(
+                    "dark-square"
+                );
+
             }
+
 
             square.dataset.row = row;
             square.dataset.col = col;
 
-            const piece = boardState[row][col];
 
-            square.textContent = pieceSymbol(piece);
+            const piece =
+                boardState[row][col];
+
+
+            square.textContent =
+                pieceSymbol(piece);
+
 
             square.onclick = () => {
-                selectSquare(row, col);
+
+                handleSquareClick(
+                    row,
+                    col
+                );
+
             };
+
 
             board.appendChild(square);
 
@@ -49,9 +80,25 @@ function createBoard(elementId = "chess-board") {
 }
 
 
-function selectSquare(row, col) {
+/* =========================================
+   CLICK SQUARE
+========================================= */
 
-    const piece = boardState[row][col];
+function handleSquareClick(row, col) {
+
+    if (
+        typeof gameOver !== "undefined" &&
+        gameOver
+    ) {
+        return;
+    }
+
+
+    const piece =
+        boardState[row][col];
+
+
+    /* SELECT PIECE */
 
     if (!selectedSquare) {
 
@@ -59,79 +106,190 @@ function selectSquare(row, col) {
             return;
         }
 
-        if (pieceColor(piece) !== currentTurn) {
+
+        if (
+            pieceColor(piece) !== currentTurn
+        ) {
             return;
         }
+
 
         selectedSquare = {
             row,
             col
         };
 
+
         renderBoard();
 
         return;
+
     }
+
+
+    /* CLICK OWN PIECE */
+
+    if (
+        piece &&
+        pieceColor(piece) === currentTurn
+    ) {
+
+        selectedSquare = {
+            row,
+            col
+        };
+
+
+        renderBoard();
+
+        return;
+
+    }
+
+
+    /* ATTEMPT MOVE */
+
+    const move = {
+
+        fromRow:
+            selectedSquare.row,
+
+        fromCol:
+            selectedSquare.col,
+
+        toRow:
+            row,
+
+        toCol:
+            col
+
+    };
 
 
     if (
-        selectedSquare.row === row &&
-        selectedSquare.col === col
+        isLegalMove(
+            move.fromRow,
+            move.fromCol,
+            move.toRow,
+            move.toCol
+        )
     ) {
+
+        makeMove(
+            move.fromRow,
+            move.fromCol,
+            move.toRow,
+            move.toCol
+        );
+
 
         selectedSquare = null;
 
+
         renderBoard();
 
+
+        if (
+            typeof checkGameStatus ===
+            "function"
+        ) {
+
+            checkGameStatus();
+
+        }
+
+
+        /* BOT TURN */
+
+        if (
+            !gameOver &&
+            currentTurn === BLACK &&
+            typeof botMove === "function"
+        ) {
+
+            setTimeout(
+                botMove,
+                300
+            );
+
+        }
+
         return;
+
     }
 
 
-    movePiece(
-        selectedSquare.row,
-        selectedSquare.col,
-        row,
-        col
-    );
+    selectedSquare = null;
+
+    renderBoard();
 
 }
 
 
-function movePiece(fromRow, fromCol, toRow, toCol) {
+/* =========================================
+   RENDER BOARD
+========================================= */
 
-    const piece =
-        boardState[fromRow][fromCol];
+function renderBoard() {
 
-    if (!piece) {
+    createBoard();
+
+
+    if (!selectedSquare) {
         return;
     }
 
-    if (!isLegalMove(
-        fromRow,
-        fromCol,
-        toRow,
-        toCol
-    )) {
-        return;
+
+    const squares =
+        document.querySelectorAll(
+            "#chess-board .square"
+        );
+
+
+    const index =
+        selectedSquare.row * 8 +
+        selectedSquare.col;
+
+
+    if (squares[index]) {
+
+        squares[index].classList.add(
+            "selected-square"
+        );
+
     }
 
-    boardState[toRow][toCol] = piece;
 
-    boardState[fromRow][fromCol] = null;
+    /* HIGHLIGHT LEGAL MOVES */
 
-    selectedSquare = null;
+    const moves =
+        generateLegalMoves(
+            currentTurn
+        );
 
-    currentTurn =
-        currentTurn === "white"
-            ? "black"
-            : "white";
 
-    renderBoard();
+    for (const move of moves) {
 
-    if (typeof botMove === "function") {
+        if (
+            move.fromRow ===
+            selectedSquare.row &&
 
-        if (currentTurn === "black") {
-            setTimeout(botMove, 400);
+            move.fromCol ===
+            selectedSquare.col
+        ) {
+
+            const targetIndex =
+                move.toRow * 8 +
+                move.toCol;
+
+
+            if (squares[targetIndex]) {
+
+                squares[targetIndex].style.boxShadow =
+                    "inset 0 0 0 5px rgba(250, 204, 21, 0.7)";
+
+            }
+
         }
 
     }
@@ -139,38 +297,15 @@ function movePiece(fromRow, fromCol, toRow, toCol) {
 }
 
 
-function renderBoard() {
+/* =========================================
+   START BOARD
+========================================= */
 
-    createBoard();
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    if (!selectedSquare) {
-        return;
+        createBoard();
+
     }
-
-    const squares =
-        document.querySelectorAll("#chess-board .square");
-
-    const index =
-        selectedSquare.row * 8 +
-        selectedSquare.col;
-
-    if (squares[index]) {
-        squares[index].classList.add(
-            "selected-square"
-        );
-    }
-
-}
-
-
-function resetBoard() {
-
-    boardState = createStartingBoard();
-
-    selectedSquare = null;
-
-    currentTurn = "white";
-
-    renderBoard();
-
-}
+);
