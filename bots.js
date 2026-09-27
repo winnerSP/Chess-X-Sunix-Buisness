@@ -1,78 +1,125 @@
+/* =========================================
+   CHESS X SUNIX
+   ENGINE BOT
+========================================= */
+
+
+/* =========================================
+   BOT MOVE
+========================================= */
+
 function botMove() {
 
-    if (currentTurn !== "black") {
+    if (gameOver) {
         return;
     }
 
-    const possibleMoves = [];
 
-    for (let row = 0; row < 8; row++) {
+    if (currentTurn !== BLACK) {
+        return;
+    }
 
-        for (let col = 0; col < 8; col++) {
 
-            const piece =
-                boardState[row][col];
+    const status =
+        document.getElementById(
+            "game-status"
+        );
 
-            if (
-                piece &&
-                pieceColor(piece) === "black"
-            ) {
 
-                for (let toRow = 0; toRow < 8; toRow++) {
+    if (status) {
 
-                    for (let toCol = 0; toCol < 8; toCol++) {
+        status.textContent =
+            "CHESS X SUNIX ENGINE is thinking...";
 
-                        if (
-                            isLegalMove(
-                                row,
-                                col,
-                                toRow,
-                                toCol
-                            )
-                        ) {
+    }
 
-                            possibleMoves.push({
-                                fromRow: row,
-                                fromCol: col,
-                                toRow,
-                                toCol
-                            });
 
-                        }
+    /*
+        Bot strength will eventually control
+        search depth.
 
-                    }
+        For now:
 
-                }
+        800  -> depth 1
+        1000 -> depth 2
+        1200 -> depth 2
+        1500 -> depth 3
+    */
 
-            }
+    let depth = 2;
+
+
+    if (
+        typeof activeBotRating !==
+        "undefined"
+    ) {
+
+        if (activeBotRating >= 1500) {
+
+            depth = 3;
+
+        } else if (
+            activeBotRating >= 1000
+        ) {
+
+            depth = 2;
+
+        } else {
+
+            depth = 1;
 
         }
 
     }
 
 
-    if (possibleMoves.length === 0) {
+    const move =
+        findBestMove(depth);
+
+
+    if (!move) {
+
+        if (
+            typeof checkGameStatus ===
+            "function"
+        ) {
+
+            checkGameStatus();
+
+        }
+
         return;
+
     }
 
 
-    const move =
-        possibleMoves[
-            Math.floor(
-                Math.random() *
-                possibleMoves.length
-            )
-        ];
+    makeMove(
+        move.fromRow,
+        move.fromCol,
+        move.toRow,
+        move.toCol
+    );
 
-
-    boardState[move.toRow][move.toCol] =
-        boardState[move.fromRow][move.fromCol];
-
-    boardState[move.fromRow][move.fromCol] =
-        null;
-
-    currentTurn = "white";
 
     renderBoard();
+
+
+    if (
+        typeof checkGameStatus ===
+        "function"
+    ) {
+
+        checkGameStatus();
+
+    }
+
+
+    if (status) {
+
+        status.textContent =
+            currentTurn.toUpperCase() +
+            " TO MOVE.";
+
+    }
 
 }
