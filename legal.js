@@ -1,12 +1,5 @@
-/* =========================================
-   CHESS X SUNIX ENGINE
-   LEGAL MOVE SYSTEM
-========================================= */
+// CHESS X SUNIX — Legal Move System
 
-
-/* =========================================
-   FIND KING
-========================================= */
 
 function findKing(color) {
 
@@ -16,45 +9,53 @@ function findKing(color) {
 
             const piece = boardState[row][col];
 
-            if (
-                piece === color + "-king"
-            ) {
-                return {
-                    row,
-                    col
-                };
+            if (piece === color + "-king") {
+                return { row, col };
             }
-
         }
-
     }
 
     return null;
 }
 
 
-/* =========================================
-   IS SQUARE ATTACKED
-========================================= */
-
-function isSquareAttacked(
-    row,
-    col,
-    byColor
-) {
+function isSquareAttacked(row, col, byColor) {
 
     for (let fromRow = 0; fromRow < 8; fromRow++) {
 
         for (let fromCol = 0; fromCol < 8; fromCol++) {
 
-            const piece =
-                boardState[fromRow][fromCol];
+            const piece = boardState[fromRow][fromCol];
 
-            if (!piece) {
+            if (!piece) continue;
+
+            if (pieceColor(piece) !== byColor) {
                 continue;
             }
 
-            if (pieceColor(piece) !== byColor) {
+            /*
+             * We deliberately use the movement rules here.
+             * This asks:
+             *
+             * "Could this piece attack this square?"
+             */
+
+            const type = pieceType(piece);
+
+            // Pawns attack diagonally even when the target square
+            // is otherwise empty.
+            if (type === "pawn") {
+
+                const direction =
+                    byColor === WHITE ? -1 : 1;
+
+                if (
+                    row - fromRow === direction &&
+                    Math.abs(col - fromCol) === 1
+                ) {
+                    return true;
+                }
+
                 continue;
             }
 
@@ -68,32 +69,24 @@ function isSquareAttacked(
             ) {
                 return true;
             }
-
         }
-
     }
 
     return false;
 }
 
 
-/* =========================================
-   IS KING IN CHECK
-========================================= */
-
 function isKingInCheck(color) {
 
-    const king =
-        findKing(color);
+    const king = findKing(color);
 
+    // A missing king means the position is invalid.
     if (!king) {
         return true;
     }
 
     const enemy =
-        color === WHITE
-            ? BLACK
-            : WHITE;
+        color === WHITE ? BLACK : WHITE;
 
     return isSquareAttacked(
         king.row,
@@ -103,58 +96,39 @@ function isKingInCheck(color) {
 }
 
 
-/* =========================================
-   TEST LEGAL MOVE
-========================================= */
-
 function testLegalMove(move) {
 
     const oldBoard =
-        boardState.map(
-            row => [...row]
-        );
+        boardState.map(row => [...row]);
 
-    boardState[
-        move.toRow
-    ][
-        move.toCol
-    ] =
-        boardState[
-            move.fromRow
-        ][
-            move.fromCol
-        ];
+    const movingPiece =
+        boardState[move.fromRow][move.fromCol];
 
-    boardState[
-        move.fromRow
-    ][
-        move.fromCol
-    ] = null;
+    // Never allow a move that captures a king.
+    const target =
+        boardState[move.toRow][move.toCol];
 
+    if (target && pieceType(target) === "king") {
+        return false;
+    }
+
+    boardState[move.toRow][move.toCol] =
+        movingPiece;
+
+    boardState[move.fromRow][move.fromCol] =
+        null;
 
     const color =
-        pieceColor(
-            boardState[
-                move.toRow
-            ][
-                move.toCol
-            ]
-        );
-
+        pieceColor(movingPiece);
 
     const legal =
         !isKingInCheck(color);
-
 
     boardState = oldBoard;
 
     return legal;
 }
 
-
-/* =========================================
-   LEGAL MOVE
-========================================= */
 
 function isLegalMove(
     fromRow,
@@ -174,22 +148,25 @@ function isLegalMove(
         return false;
     }
 
+    // A king can never be captured.
+    const target =
+        boardState[toRow][toCol];
+
+    if (
+        target &&
+        pieceType(target) === "king"
+    ) {
+        return false;
+    }
 
     return testLegalMove({
-
         fromRow,
         fromCol,
         toRow,
         toCol
-
     });
-
 }
 
-
-/* =========================================
-   GENERATE LEGAL MOVES
-========================================= */
 
 function generateLegalMoves(color) {
 
@@ -197,16 +174,10 @@ function generateLegalMoves(color) {
         generateMoves(color);
 
     return pseudoMoves.filter(
-        move =>
-            testLegalMove(move)
+        move => testLegalMove(move)
     );
-
 }
 
-
-/* =========================================
-   CHECKMATE
-========================================= */
 
 function isCheckmate(color) {
 
@@ -214,13 +185,8 @@ function isCheckmate(color) {
         isKingInCheck(color) &&
         generateLegalMoves(color).length === 0
     );
-
 }
 
-
-/* =========================================
-   STALEMATE
-========================================= */
 
 function isStalemate(color) {
 
@@ -228,5 +194,4 @@ function isStalemate(color) {
         !isKingInCheck(color) &&
         generateLegalMoves(color).length === 0
     );
-
 }
