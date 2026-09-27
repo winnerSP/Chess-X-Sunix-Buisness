@@ -1,0 +1,95 @@
+.chess-page {
+    width: min(1200px, 94%);
+    margin: auto;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.game-menu {
+    margin-bottom: 35px;
+}
+
+.game-menu h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.game-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.game-buttons button,
+.puzzle-panel button {
+    border: 1px solid #1d3b69;
+    background: #0d1b35;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.game-buttons button:hover,
+.puzzle-panel button:hover {
+    background: #2563eb;
+}
+
+.board-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#chess-board,
+#puzzle-board {
+    width: min(80vw, 640px);
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    border: 5px solid #13264a;
+    box-shadow: 0 0 35px rgba(37, 99, 235, 0.35);
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(28px, 7vw, 65px);
+    cursor: pointer;
+    user-select: none;
+}
+
+.light-square {
+    background: #dbeafe;
+}
+
+.dark-square {
+    background: #3b82f6;
+}
+
+.selected-square {
+    outline: 4px solid #facc15;
+    outline-offset: -4px;
+}
+
+#game-status {
+    margin-top: 20px;
+    color: #9fb0ca;
+}
+
+.game-icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.puzzle-panel {
+    margin: 25px auto;
+    max-width: 600px;
+    padding: 25px;
+    background: #0d1b35;
+    border: 1px solid #1d3b69;
+    border-radius: 16px;
+}
