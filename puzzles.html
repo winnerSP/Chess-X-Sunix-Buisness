@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Puzzles — CHESS X SUNIX</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chess.css">
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        CHESS X SUNIX
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">Home</a>
+        <a href="play.html">Play</a>
+        <a href="puzzles.html">Puzzles</a>
+        <a href="learn.html">Learn</a>
+        <a href="tournaments.html">Tournaments</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="login.html">Login</a>
+
+    </div>
+
+</nav>
+
+
+<main class="chess-page">
+
+    <h1>Chess Puzzles</h1>
+
+    <p>Solve the position and find the best move.</p>
+
+    <div id="puzzle-board"></div>
+
+    <div class="puzzle-panel">
+
+        <h2 id="puzzle-title">
+            Puzzle #1
+        </h2>
+
+        <p id="puzzle-status">
+            Find the best move.
+        </p>
+
+        <button onclick="loadPuzzle()">
+            New Puzzle
+        </button>
+
+    </div>
+
+</main>
+
+
+<script src="chess.js"></script>
+<script src="board.js"></script>
+<script src="puzzle.js"></script>
+<script src="puzzles.js"></script>
+
+</body>
+
+</html>
