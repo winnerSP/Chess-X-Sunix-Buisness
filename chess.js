@@ -1,24 +1,30 @@
-/* =========================================
-   CHESS X SUNIX ENGINE
-   CORE BOARD + MOVE GENERATION
-========================================= */
+// CHESS X SUNIX — Chess Core
 
 const WHITE = "white";
 const BLACK = "black";
 
 let boardState = createStartingBoard();
-
 let currentTurn = WHITE;
 
 
-/* =========================================
-   BOARD
-========================================= */
+// Special chess-rule state
+let gameState = {
+    enPassant: null,
+
+    whiteKingMoved: false,
+    blackKingMoved: false,
+
+    whiteRookLeftMoved: false,
+    whiteRookRightMoved: false,
+
+    blackRookLeftMoved: false,
+    blackRookRightMoved: false
+};
+
 
 function createStartingBoard() {
 
     return [
-
         [
             "black-rook",
             "black-knight",
@@ -42,11 +48,8 @@ function createStartingBoard() {
         ],
 
         [null, null, null, null, null, null, null, null],
-
         [null, null, null, null, null, null, null, null],
-
         [null, null, null, null, null, null, null, null],
-
         [null, null, null, null, null, null, null, null],
 
         [
@@ -70,15 +73,9 @@ function createStartingBoard() {
             "white-knight",
             "white-rook"
         ]
-
     ];
-
 }
 
-
-/* =========================================
-   PIECES
-========================================= */
 
 const PIECE_SYMBOLS = {
 
@@ -95,14 +92,11 @@ const PIECE_SYMBOLS = {
     "black-bishop": "♝",
     "black-knight": "♞",
     "black-pawn": "♟"
-
 };
 
 
 function pieceSymbol(piece) {
-
     return PIECE_SYMBOLS[piece] || "";
-
 }
 
 
@@ -115,7 +109,6 @@ function pieceColor(piece) {
     return piece.startsWith("white")
         ? WHITE
         : BLACK;
-
 }
 
 
@@ -126,13 +119,8 @@ function pieceType(piece) {
     }
 
     return piece.split("-")[1];
-
 }
 
-
-/* =========================================
-   BOARD BOUNDS
-========================================= */
 
 function insideBoard(row, col) {
 
@@ -142,13 +130,8 @@ function insideBoard(row, col) {
         col >= 0 &&
         col < 8
     );
-
 }
 
-
-/* =========================================
-   PATH CHECK
-========================================= */
 
 function pathClear(
     fromRow,
@@ -163,12 +146,8 @@ function pathClear(
     const colStep =
         Math.sign(toCol - fromCol);
 
-    let row =
-        fromRow + rowStep;
-
-    let col =
-        fromCol + colStep;
-
+    let row = fromRow + rowStep;
+    let col = fromCol + colStep;
 
     while (
         row !== toRow ||
@@ -181,17 +160,70 @@ function pathClear(
 
         row += rowStep;
         col += colStep;
-
     }
 
     return true;
-
 }
 
 
-/* =========================================
-   BASIC MOVE RULES
-========================================= */
+function isEnPassantMove(
+    fromRow,
+    fromCol,
+    toRow,
+    toCol
+) {
+
+    const piece =
+        boardState[fromRow][fromCol];
+
+    if (!piece) {
+        return false;
+    }
+
+    if (pieceType(piece) !== "pawn") {
+        return false;
+    }
+
+    if (!gameState.enPassant) {
+        return false;
+    }
+
+    return (
+        gameState.enPassant.row === toRow &&
+        gameState.enPassant.col === toCol &&
+        Math.abs(toCol - fromCol) === 1 &&
+        toRow - fromRow ===
+            (pieceColor(piece) === WHITE ? -1 : 1) &&
+        boardState[toRow][toCol] === null
+    );
+}
+
+
+function isCastlingMove(
+    fromRow,
+    fromCol,
+    toRow,
+    toCol
+) {
+
+    const piece =
+        boardState[fromRow][fromCol];
+
+    if (!piece) {
+        return false;
+    }
+
+    if (pieceType(piece) !== "king") {
+        return false;
+    }
+
+    if (fromRow !== toRow) {
+        return false;
+    }
+
+    return Math.abs(toCol - fromCol) === 2;
+}
+
 
 function isPseudoLegalMove(
     fromRow,
@@ -204,7 +236,6 @@ function isPseudoLegalMove(
         return false;
     }
 
-
     const piece =
         boardState[fromRow][fromCol];
 
@@ -212,27 +243,26 @@ function isPseudoLegalMove(
         return false;
     }
 
-
     const target =
         boardState[toRow][toCol];
 
+    // Kings are never captured.
+    if (
+        target &&
+        pieceType(target) === "king"
+    ) {
+        return false;
+    }
 
     if (
         target &&
         pieceColor(target) === pieceColor(piece)
     ) {
-
         return false;
-
     }
 
-
-    const type =
-        pieceType(piece);
-
-    const color =
-        pieceColor(piece);
-
+    const type = pieceType(piece);
+    const color = pieceColor(piece);
 
     const rowDiff =
         toRow - fromRow;
@@ -247,8 +277,7 @@ function isPseudoLegalMove(
         Math.abs(colDiff);
 
 
-    /* PAWN */
-
+    // PAWN
     if (type === "pawn") {
 
         const direction =
@@ -263,9 +292,7 @@ function isPseudoLegalMove(
             rowDiff === direction &&
             !target
         ) {
-
             return true;
-
         }
 
 
@@ -274,13 +301,9 @@ function isPseudoLegalMove(
             rowDiff === direction * 2 &&
             fromRow === startRow &&
             !target &&
-            boardState[
-                fromRow + direction
-            ][fromCol] === null
+            boardState[fromRow + direction][fromCol] === null
         ) {
-
             return true;
-
         }
 
 
@@ -290,53 +313,68 @@ function isPseudoLegalMove(
             target &&
             pieceColor(target) !== color
         ) {
-
             return true;
-
         }
 
 
-        return false;
+        // EN PASSANT
+        if (
+            isEnPassantMove(
+                fromRow,
+                fromCol,
+                toRow,
+                toCol
+            )
+        ) {
+            return true;
+        }
 
+        return false;
     }
 
 
-    /* KNIGHT */
-
+    // KNIGHT
     if (type === "knight") {
 
         return (
             (absRow === 2 && absCol === 1) ||
             (absRow === 1 && absCol === 2)
         );
-
     }
 
 
-    /* KING */
-
+    // KING
     if (type === "king") {
 
-        return (
+        // Normal king move
+        if (
             absRow <= 1 &&
             absCol <= 1 &&
-            (absRow + absCol > 0)
-        );
+            absRow + absCol > 0
+        ) {
+            return true;
+        }
 
+        // Castling geometry
+        if (
+            absRow === 0 &&
+            absCol === 2
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
 
-    /* ROOK */
-
+    // ROOK
     if (type === "rook") {
 
         if (
             fromRow !== toRow &&
             fromCol !== toCol
         ) {
-
             return false;
-
         }
 
         return pathClear(
@@ -345,12 +383,10 @@ function isPseudoLegalMove(
             toRow,
             toCol
         );
-
     }
 
 
-    /* BISHOP */
-
+    // BISHOP
     if (type === "bishop") {
 
         if (absRow !== absCol) {
@@ -363,12 +399,10 @@ function isPseudoLegalMove(
             toRow,
             toCol
         );
-
     }
 
 
-    /* QUEEN */
-
+    // QUEEN
     if (type === "queen") {
 
         const straight =
@@ -378,11 +412,9 @@ function isPseudoLegalMove(
         const diagonal =
             absRow === absCol;
 
-
         if (!straight && !diagonal) {
             return false;
         }
-
 
         return pathClear(
             fromRow,
@@ -390,96 +422,31 @@ function isPseudoLegalMove(
             toRow,
             toCol
         );
-
     }
 
 
     return false;
-
 }
 
-
-/* =========================================
-   MAKE MOVE
-========================================= */
-
-function makeMove(
-    fromRow,
-    fromCol,
-    toRow,
-    toCol
-) {
-
-    if (
-        !isPseudoLegalMove(
-            fromRow,
-            fromCol,
-            toRow,
-            toCol
-        )
-    ) {
-
-        return false;
-
-    }
-
-
-    boardState[toRow][toCol] =
-        boardState[fromRow][fromCol];
-
-    boardState[fromRow][fromCol] =
-        null;
-
-
-    currentTurn =
-        currentTurn === WHITE
-            ? BLACK
-            : WHITE;
-
-
-    return true;
-
-}
-
-
-/* =========================================
-   RESET
-========================================= */
 
 function resetGame() {
 
     boardState =
         createStartingBoard();
 
-    currentTurn =
-        WHITE;
+    currentTurn = WHITE;
 
-}
+    gameState = {
 
+        enPassant: null,
 
-/* =========================================
-   ENGINE INFO
-========================================= */
+        whiteKingMoved: false,
+        blackKingMoved: false,
 
-function getEngineInfo() {
+        whiteRookLeftMoved: false,
+        whiteRookRightMoved: false,
 
-    return {
-
-        name:
-            "CHESS X SUNIX Engine",
-
-        version:
-            "0.1",
-
-        language:
-            "JavaScript",
-
-        board:
-            "8x8",
-
-        status:
-            "Development"
-
+        blackRookLeftMoved: false,
+        blackRookRightMoved: false
     };
-
 }
