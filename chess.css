@@ -30,6 +30,7 @@
     padding: 12px 20px;
     border-radius: 10px;
     cursor: pointer;
+    font-size: 16px;
 }
 
 .game-buttons button:hover,
@@ -37,59 +38,165 @@
     background: #2563eb;
 }
 
+
+/* =========================================
+   CHESS BOARD
+========================================= */
+
 .board-area {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+
 #chess-board,
 #puzzle-board {
+
     width: min(80vw, 640px);
-    aspect-ratio: 1;
+    height: min(80vw, 640px);
+
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
+
+    grid-template-columns:
+        repeat(8, 1fr);
+
+    grid-template-rows:
+        repeat(8, 1fr);
+
     border: 5px solid #13264a;
-    box-shadow: 0 0 35px rgba(37, 99, 235, 0.35);
+
+    box-shadow:
+        0 0 35px rgba(37, 99, 235, 0.35);
+
+    overflow: hidden;
 }
 
+
 .square {
+
     display: flex;
+
     justify-content: center;
+
     align-items: center;
-    font-size: clamp(28px, 7vw, 65px);
+
+    position: relative;
+
     cursor: pointer;
+
     user-select: none;
+
+    min-width: 0;
+    min-height: 0;
 }
+
 
 .light-square {
     background: #dbeafe;
 }
 
+
 .dark-square {
     background: #3b82f6;
 }
 
-.selected-square {
-    outline: 4px solid #facc15;
-    outline-offset: -4px;
+
+/* =========================================
+   CHESS PIECES
+========================================= */
+
+.chess-piece {
+
+    font-family:
+        "Segoe UI Symbol",
+        "Noto Sans Symbols 2",
+        serif;
+
+    font-size:
+        clamp(32px, 7vw, 65px);
+
+    line-height: 1;
+
+    pointer-events: none;
+
+    position: relative;
+
+    z-index: 2;
 }
 
-#game-status {
-    margin-top: 20px;
-    color: #9fb0ca;
+
+/* WHITE PIECES */
+
+.white-piece {
+
+    color: #ffffff;
+
+    text-shadow:
+        0 2px 2px rgba(0, 0, 0, 0.35),
+        0 0 3px rgba(0, 0, 0, 0.5);
 }
+
+
+/* BLACK PIECES */
+
+.black-piece {
+
+    color: #111827;
+
+    text-shadow:
+        0 1px 2px rgba(255, 255, 255, 0.35);
+}
+
+
+/* =========================================
+   SELECTION
+========================================= */
+
+.selected-square {
+
+    box-shadow:
+        inset 0 0 0 5px #facc15;
+}
+
+
+/* LEGAL MOVE */
+
+.legal-target {
+
+    box-shadow:
+        inset 0 0 0 5px
+        rgba(250, 204, 21, 0.75);
+}
+
+
+#game-status {
+
+    margin-top: 20px;
+
+    color: #9fb0ca;
+
+    font-size: 18px;
+}
+
 
 .game-icon {
     font-size: 45px;
     margin-bottom: 15px;
 }
 
+
 .puzzle-panel {
+
     margin: 25px auto;
+
     max-width: 600px;
+
     padding: 25px;
+
     background: #0d1b35;
+
     border: 1px solid #1d3b69;
+
     border-radius: 16px;
 }
