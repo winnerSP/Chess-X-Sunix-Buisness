@@ -1,0 +1,439 @@
+/* =========================================
+   CHESS X SUNIX — V3
+   MAIN STYLES
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #050b18;
+    --background-light: #0b1730;
+
+    --panel: #0d1b35;
+    --panel-light: #13264a;
+
+    --blue: #2563eb;
+    --blue-light: #38bdf8;
+    --blue-glow: #60a5fa;
+
+    --white: #ffffff;
+    --text: #eaf2ff;
+    --muted: #9fb0ca;
+
+    --border: #1d3b69;
+}
+
+
+/* =========================================
+   BODY
+========================================= */
+
+body {
+    font-family: Arial, sans-serif;
+
+    color: var(--text);
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(37, 99, 235, 0.28),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 30%,
+            rgba(56, 189, 248, 0.20),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 50% 90%,
+            rgba(37, 99, 235, 0.20),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #020617,
+            #071329,
+            #050b18
+        );
+}
+
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+
+    padding: 15px 30px;
+
+    background:
+        rgba(5, 11, 24, 0.92);
+
+    border-bottom:
+        1px solid var(--border);
+
+    box-shadow:
+        0 4px 25px rgba(0, 0, 0, 0.35);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.logo {
+    font-size: 23px;
+
+    font-weight: bold;
+
+    color: var(--white);
+
+    white-space: nowrap;
+
+    text-shadow:
+        0 0 12px
+        rgba(56, 189, 248, 0.7);
+}
+
+
+/* =========================================
+   NAV LINKS
+========================================= */
+
+.nav-links {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-left: auto;
+}
+
+.nav-links a {
+    color: var(--muted);
+
+    text-decoration: none;
+
+    padding: 10px 13px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--white);
+
+    background:
+        rgba(37, 99, 235, 0.25);
+}
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.hero {
+    min-height: 480px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 60px 20px;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(37, 99, 235, 0.22),
+            transparent 60%
+        );
+}
+
+
+.hero-content {
+    max-width: 800px;
+}
+
+
+.hero h1 {
+    font-size: clamp(42px, 8vw, 76px);
+
+    margin-bottom: 15px;
+
+    color: var(--white);
+
+    text-shadow:
+        0 0 15px
+        rgba(56, 189, 248, 0.55),
+        0 0 40px
+        rgba(37, 99, 235, 0.35);
+}
+
+
+.hero p {
+    color: var(--muted);
+
+    font-size: 20px;
+
+    margin-bottom: 8px;
+}
+
+
+/* =========================================
+   HERO BUTTONS
+========================================= */
+
+.hero-buttons {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    margin-top: 30px;
+
+    flex-wrap: wrap;
+}
+
+
+.primary-button,
+.secondary-button {
+    display: inline-block;
+
+    padding: 13px 25px;
+
+    border-radius: 12px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+
+.primary-button {
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #38bdf8
+        );
+
+    color: white;
+
+    box-shadow:
+        0 0 20px
+        rgba(37, 99, 235, 0.35);
+}
+
+
+.secondary-button {
+    background:
+        var(--panel);
+
+    color: var(--blue-light);
+
+    border:
+        1px solid var(--border);
+}
+
+
+.primary-button:hover,
+.secondary-button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 25px
+        rgba(37, 99, 235, 0.3);
+}
+
+
+/* =========================================
+   FEATURES
+========================================= */
+
+.features {
+    width: min(1200px, 92%);
+
+    margin: 0 auto;
+
+    padding: 50px 0 80px;
+
+    text-align: center;
+}
+
+
+.features h2 {
+    font-size: 32px;
+
+    margin-bottom: 30px;
+
+    color: var(--white);
+}
+
+
+/* =========================================
+   FEATURE GRID
+========================================= */
+
+.feature-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(230px, 1fr));
+
+    gap: 20px;
+}
+
+
+/* =========================================
+   FEATURE CARD
+========================================= */
+
+.feature-card {
+    padding: 28px 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 27, 53, 0.95),
+            rgba(7, 19, 41, 0.95)
+        );
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 18px;
+
+    text-decoration: none;
+
+    color: var(--text);
+
+    box-shadow:
+        0 8px 30px
+        rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.2s,
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+
+.feature-card:hover {
+    transform: translateY(-5px);
+
+    border-color:
+        var(--blue-light);
+
+    box-shadow:
+        0 10px 35px
+        rgba(37, 99, 235, 0.25);
+}
+
+
+.feature-icon {
+    font-size: 40px;
+
+    margin-bottom: 15px;
+}
+
+
+.feature-card h3 {
+    font-size: 22px;
+
+    margin-bottom: 10px;
+}
+
+
+.feature-card p {
+    color: var(--muted);
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    padding: 30px;
+
+    text-align: center;
+
+    border-top:
+        1px solid var(--border);
+
+    background:
+        rgba(2, 6, 23, 0.8);
+
+    color: var(--muted);
+
+    line-height: 1.8;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 800px) {
+
+    .navbar {
+        flex-direction: column;
+
+        gap: 12px;
+
+        padding: 15px;
+    }
+
+    .nav-links {
+        margin-left: 0;
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+    .hero {
+        min-height: 420px;
+    }
+
+    .hero h1 {
+        font-size: 44px;
+    }
+
+}
