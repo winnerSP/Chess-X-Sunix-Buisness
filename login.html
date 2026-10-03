@@ -2,50 +2,116 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login — CHESS X SUNIX</title>
+    <title>Login | Chess X Sunix</title>
 
-    <link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet" href="login.css">
 </head>
 
 <body>
 
-<main class="features">
+    <div class="login-overlay">
 
-    <div class="feature-card">
+        <div class="login-box">
 
-        <h1>CHESS X SUNIX</h1>
+            <h1>CHESS X SUNIX</h1>
 
-        <h2>Login</h2>
+            <p class="subtitle">
+                Login or create your account
+            </p>
 
-        <input
-            id="username"
-            type="text"
-            placeholder="Username"
-        >
+            <form id="loginForm">
 
-        <br><br>
+                <!-- Username -->
 
-        <button
-            class="primary-button"
-            onclick="login()"
-        >
-            Login
-        </button>
+                <label for="username">
+                    Username
+                </label>
 
-        <p id="login-status"></p>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    required
+                >
+
+
+                <!-- Password -->
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+
+                <!-- Terms -->
+
+                <label class="terms-row">
+
+                    <input
+                        type="checkbox"
+                        id="termsCheckbox"
+                        required
+                    >
+
+                    <span>
+                        I agree to the
+                        <a
+                            href="terms.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Terms and Conditions
+                        </a>
+                    </span>
+
+                </label>
+
+
+                <!-- Login -->
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                >
+                    Login
+                </button>
+
+
+                <!-- Sign Up -->
+
+                <button
+                    type="button"
+                    id="signupButton"
+                >
+                    Create Account
+                </button>
+
+
+                <!-- Status -->
+
+                <p id="loginMessage"></p>
+
+            </form>
+
+        </div>
 
     </div>
 
-</main>
 
-
-<script src="storage.js"></script>
-<script src="auth.js"></script>
+    <script src="login.js"></script>
 
 </body>
 
