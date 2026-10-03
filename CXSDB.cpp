@@ -7,6 +7,7 @@
 namespace fs = std::filesystem;
 
 class CXSDB {
+
 private:
 
     static constexpr uint32_t VERSION = 1;
@@ -16,6 +17,11 @@ private:
     struct DatabaseHeader {
         char signature[5];
         uint8_t version;
+    };
+
+    struct StorageRecord {
+        uint64_t user_id;
+        uint64_t bytes_used;
     };
 
     bool createDatabaseFile(const std::string& filename) {
@@ -47,7 +53,6 @@ public:
 
     CXSDB() {
 
-        // Create database directory
         fs::create_directories(DATABASE_DIRECTORY);
     }
 
@@ -70,6 +75,30 @@ public:
         if (!fs::exists(DATABASE_DIRECTORY + "chats.cxsdb"))
             success &= createDatabaseFile("chats.cxsdb");
 
+        // Storage database
+        if (!fs::exists(DATABASE_DIRECTORY + "storage.cxsdb")) {
+
+            std::ofstream file(
+                DATABASE_DIRECTORY + "storage.cxsdb",
+                std::ios::binary
+            );
+
+            if (!file)
+                return false;
+
+            DatabaseHeader header = {
+                {'C', 'X', 'S', 'D', 'B'},
+                VERSION
+            };
+
+            file.write(
+                reinterpret_cast<const char*>(&header),
+                sizeof(header)
+            );
+
+            file.close();
+        }
+
         return success;
     }
 
@@ -85,30 +114,26 @@ public:
 
         std::cout << "Database files:\n";
 
-        std::cout << "["
-                  << (fs::exists(DATABASE_DIRECTORY + "users.cxsdb")
-                      ? "OK" : "ERROR")
-                  << "] users.cxsdb\n";
+        const std::string files[] = {
+            "users.cxsdb",
+            "games.cxsdb",
+            "ratings.cxsdb",
+            "puzzles.cxsdb",
+            "chats.cxsdb",
+            "storage.cxsdb"
+        };
 
-        std::cout << "["
-                  << (fs::exists(DATABASE_DIRECTORY + "games.cxsdb")
-                      ? "OK" : "ERROR")
-                  << "] games.cxsdb\n";
+        for (const std::string& filename : files) {
 
-        std::cout << "["
-                  << (fs::exists(DATABASE_DIRECTORY + "ratings.cxsdb")
-                      ? "OK" : "ERROR")
-                  << "] ratings.cxsdb\n";
-
-        std::cout << "["
-                  << (fs::exists(DATABASE_DIRECTORY + "puzzles.cxsdb")
-                      ? "OK" : "ERROR")
-                  << "] puzzles.cxsdb\n";
-
-        std::cout << "["
-                  << (fs::exists(DATABASE_DIRECTORY + "chats.cxsdb")
-                      ? "OK" : "ERROR")
-                  << "] chats.cxsdb\n";
+            std::cout << "["
+                      << (fs::exists(
+                              DATABASE_DIRECTORY + filename
+                          )
+                          ? "OK" : "ERROR")
+                      << "] "
+                      << filename
+                      << "\n";
+        }
 
         std::cout << "\nCXSDB READY.\n";
     }
