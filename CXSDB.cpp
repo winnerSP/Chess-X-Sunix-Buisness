@@ -1,5 +1,6 @@
 #include "CXSDB.hpp"
 
+#include <iostream>
 #include <fstream>
 #include <filesystem>
 
@@ -65,21 +66,4 @@ bool CXSDB::initialize() {
     }
 
     return true;
-}
-
-
-int main() {
-
-    if (!CXSDB::initialize()) {
-
-        std::cerr
-            << "CXSDB ERROR: Initialization failed.\n";
-
-        return 1;
-    }
-
-    std::cout
-        << "CXSDB ONLINE!\n";
-
-    return 0;
 }

@@ -1,246 +1,180 @@
-#include <iostream>
+#include "CXSDB_auth.hpp"
+#include "CXSDB.hpp"
+
 #include <fstream>
 #include <filesystem>
-#include <string>
-#include <cstdint>
-#include <limits>
+#include <cstring>
 
 namespace fs = std::filesystem;
 
-class CXSDB_Auth {
+namespace CXSDBAuth {
 
-private:
+    static const std::string USERS_FILE =
+        std::string(CXSDB::DATABASE_DIRECTORY) + "users.cxsdb";
 
-    const std::string DATABASE_DIRECTORY = "database/";
+    static const std::string STORAGE_FILE =
+        std::string(CXSDB::DATABASE_DIRECTORY) + "storage.cxsdb";
 
-    struct DatabaseHeader {
-        char signature[5];
-        uint8_t version;
-    };
 
-    struct UserRecord {
-        uint64_t user_id;
-        char username[32];
-        uint64_t password_hash;
-    };
+    uint64_t hashPassword(
+        const std::string& password
+    ) {
 
-    struct StorageRecord {
-        uint64_t user_id;
-        uint64_t bytes_used;
-    };
-
-    // Prototype password hashing.
-    // This is NOT intended as production-grade password security.
-    uint64_t hashPassword(const std::string& password) {
-
-        uint64_t hash = 1469598103934665603ULL;
+        uint64_t hash =
+            1469598103934665603ULL;
 
         for (unsigned char character : password) {
 
             hash ^= character;
 
-            hash *= 1099511628211ULL;
+            hash *=
+                1099511628211ULL;
         }
 
         return hash;
     }
 
-    bool createFileIfMissing(const std::string& filename) {
-
-        std::string path =
-            DATABASE_DIRECTORY + filename;
-
-        if (fs::exists(path))
-            return true;
-
-        std::ofstream file(
-            path,
-            std::ios::binary
-        );
-
-        if (!file)
-            return false;
-
-        DatabaseHeader header = {
-            {'C', 'X', 'S', 'D', 'B'},
-            1
-        };
-
-        file.write(
-            reinterpret_cast<const char*>(&header),
-            sizeof(header)
-        );
-
-        return true;
-    }
-
-    bool initializeDatabase() {
-
-        try {
-
-            fs::create_directories(
-                DATABASE_DIRECTORY
-            );
-
-        }
-        catch (...) {
-
-            return false;
-        }
-
-        return
-            createFileIfMissing("users.cxsdb") &&
-            createFileIfMissing("storage.cxsdb");
-    }
 
     bool usernameExists(
         const std::string& username
     ) {
 
         std::ifstream file(
-            DATABASE_DIRECTORY + "users.cxsdb",
+            USERS_FILE,
             std::ios::binary
         );
 
         if (!file)
             return false;
 
-        DatabaseHeader header{};
+
+        CXSDB::DatabaseHeader header{};
 
         file.read(
             reinterpret_cast<char*>(&header),
             sizeof(header)
         );
 
-        UserRecord user{};
+        if (!file)
+            return false;
+
+
+        if (
+            std::memcmp(
+                header.signature,
+                "CXSDB",
+                5
+            ) != 0
+        )
+            return false;
+
+
+        CXSDB::UserRecord user{};
 
         while (
             file.read(
                 reinterpret_cast<char*>(&user),
-                sizeof(UserRecord)
+                sizeof(user)
             )
         ) {
 
-            std::string storedUsername(
-                user.username
-            );
-
-            if (storedUsername == username)
+            if (
+                std::string(user.username)
+                == username
+            )
                 return true;
         }
+
 
         return false;
     }
 
+
     uint64_t getNextUserID() {
 
         std::ifstream file(
-            DATABASE_DIRECTORY + "users.cxsdb",
+            USERS_FILE,
             std::ios::binary
         );
 
         if (!file)
             return 1;
 
-        DatabaseHeader header{};
+
+        CXSDB::DatabaseHeader header{};
 
         file.read(
             reinterpret_cast<char*>(&header),
             sizeof(header)
         );
 
+
         uint64_t highestID = 0;
 
-        UserRecord user{};
+        CXSDB::UserRecord user{};
+
 
         while (
             file.read(
                 reinterpret_cast<char*>(&user),
-                sizeof(UserRecord)
+                sizeof(user)
             )
         ) {
 
-            if (user.user_id > highestID)
+            if (
+                user.user_id >
+                highestID
+            )
                 highestID = user.user_id;
         }
+
 
         return highestID + 1;
     }
 
-    bool addStorageRecord(
-        uint64_t userID,
-        uint64_t bytes
+
+    static bool addStorageRecord(
+        uint64_t userID
     ) {
 
-        std::fstream file(
-            DATABASE_DIRECTORY + "storage.cxsdb",
+        std::ofstream file(
+            STORAGE_FILE,
             std::ios::binary |
-            std::ios::in |
-            std::ios::out
+            std::ios::app
         );
 
         if (!file)
             return false;
 
-        DatabaseHeader header{};
 
-        file.read(
-            reinterpret_cast<char*>(&header),
-            sizeof(header)
-        );
+        CXSDB::StorageRecord record{};
 
-        StorageRecord record{};
+        record.user_id =
+            userID;
 
-        std::streampos recordPosition;
+        record.bytes_used =
+            0;
 
-        while (true) {
-
-            recordPosition = file.tellg();
-
-            if (!file.read(
-                    reinterpret_cast<char*>(&record),
-                    sizeof(StorageRecord)
-                ))
-                break;
-
-            if (record.user_id == userID) {
-
-                record.bytes_used += bytes;
-
-                file.clear();
-
-                file.seekp(recordPosition);
-
-                file.write(
-                    reinterpret_cast<const char*>(&record),
-                    sizeof(StorageRecord)
-                );
-
-                return true;
-            }
-        }
-
-        record.user_id = userID;
-        record.bytes_used = bytes;
-
-        file.clear();
-
-        file.seekp(0, std::ios::end);
 
         file.write(
             reinterpret_cast<const char*>(&record),
-            sizeof(StorageRecord)
+            sizeof(record)
         );
 
-        return true;
+
+        return static_cast<bool>(file);
     }
+
 
     bool createUser(
         const std::string& username,
         const std::string& password
     ) {
 
-        if (username.empty() || password.empty())
+        if (username.empty())
+            return false;
+
+        if (password.empty())
             return false;
 
         if (username.size() >= 32)
@@ -249,26 +183,34 @@ private:
         if (usernameExists(username))
             return false;
 
-        uint64_t userID = getNextUserID();
 
-        UserRecord user{};
+        uint64_t userID =
+            getNextUserID();
 
-        user.user_id = userID;
 
-        for (size_t i = 0;
-             i < username.size();
-             i++) {
+        CXSDB::UserRecord user{};
 
-            user.username[i] = username[i];
-        }
+        user.user_id =
+            userID;
 
-        user.username[username.size()] = '\0';
+
+        std::strncpy(
+            user.username,
+            username.c_str(),
+            sizeof(user.username) - 1
+        );
+
+        user.username[
+            sizeof(user.username) - 1
+        ] = '\0';
+
 
         user.password_hash =
             hashPassword(password);
 
+
         std::ofstream file(
-            DATABASE_DIRECTORY + "users.cxsdb",
+            USERS_FILE,
             std::ios::binary |
             std::ios::app
         );
@@ -276,331 +218,105 @@ private:
         if (!file)
             return false;
 
+
         file.write(
             reinterpret_cast<const char*>(&user),
-            sizeof(UserRecord)
+            sizeof(user)
         );
 
-        file.close();
 
-        // Initial account storage record.
-        if (!addStorageRecord(userID, sizeof(UserRecord)))
+        if (!file)
             return false;
+
+
+        if (!addStorageRecord(userID))
+            return false;
+
 
         return true;
     }
+
 
     bool ensureROOT() {
 
-        if (usernameExists("ROOT.CSX"))
+        if (
+            usernameExists("ROOT.CSX")
+        )
             return true;
 
-        std::cout << "\n";
-        std::cout << "================================\n";
-        std::cout << "       ROOT.CSX SETUP\n";
-        std::cout << "================================\n\n";
 
-        std::cout
-            << "ROOT.CSX does not exist.\n";
-
-        std::cout
-            << "Create the ROOT password:\n> ";
-
-        std::string password;
-
-        std::getline(
-            std::cin,
-            password
-        );
-
-        if (password.empty()) {
-
-            std::cout
-                << "ERROR: Password cannot be empty.\n";
-
-            return false;
-        }
-
-        if (!createUser(
-                "ROOT.CSX",
-                password
-            )) {
-
-            std::cout
-                << "ERROR: Could not create ROOT.CSX.\n";
-
-            return false;
-        }
-
-        std::cout
-            << "\nROOT.CSX CREATED.\n";
-
-        return true;
+        return false;
     }
 
-    bool login() {
 
-        std::string username;
-        std::string password;
-
-        std::cout << "\n";
-        std::cout << "========== LOGIN ==========\n";
-
-        std::cout << "Username: ";
-
-        std::getline(
-            std::cin,
-            username
-        );
-
-        std::cout << "Password: ";
-
-        std::getline(
-            std::cin,
-            password
-        );
+    bool login(
+        const std::string& username,
+        const std::string& password
+    ) {
 
         std::ifstream file(
-            DATABASE_DIRECTORY + "users.cxsdb",
+            USERS_FILE,
             std::ios::binary
         );
 
-        if (!file) {
-
-            std::cout
-                << "ERROR: User database unavailable.\n";
-
+        if (!file)
             return false;
-        }
 
-        DatabaseHeader header{};
+
+        CXSDB::DatabaseHeader header{};
 
         file.read(
             reinterpret_cast<char*>(&header),
             sizeof(header)
         );
 
-        UserRecord user{};
+        if (!file)
+            return false;
+
+
+        if (
+            std::memcmp(
+                header.signature,
+                "CXSDB",
+                5
+            ) != 0
+        )
+            return false;
+
 
         uint64_t passwordHash =
             hashPassword(password);
 
+
+        CXSDB::UserRecord user{};
+
+
         while (
             file.read(
                 reinterpret_cast<char*>(&user),
-                sizeof(UserRecord)
+                sizeof(user)
             )
         ) {
 
-            std::string storedUsername(
-                user.username
-            );
-
             if (
-                storedUsername == username &&
-                user.password_hash == passwordHash
+                std::string(user.username)
+                == username
+                &&
+                user.password_hash
+                == passwordHash
             ) {
-
-                std::cout << "\n";
-                std::cout
-                    << "LOGIN SUCCESSFUL!\n";
-
-                std::cout
-                    << "User ID : "
-                    << user.user_id
-                    << "\n";
-
-                std::cout
-                    << "Account : "
-                    << user.username
-                    << "\n";
 
                 return true;
             }
         }
 
-        std::cout << "\n";
-        std::cout
-            << "LOGIN FAILED.\n";
-
-        std::cout
-            << "Invalid username or password.\n";
 
         return false;
     }
 
-    bool signUp() {
 
-        std::string username;
-        std::string password;
-        std::string confirmation;
-
-        std::cout << "\n";
-        std::cout << "========= SIGN UP =========\n";
-
-        std::cout << "Username: ";
-
-        std::getline(
-            std::cin,
-            username
-        );
-
-        if (username == "ROOT.CSX") {
-
-            std::cout
-                << "That username is reserved.\n";
-
-            return false;
-        }
-
-        std::cout << "Password: ";
-
-        std::getline(
-            std::cin,
-            password
-        );
-
-        std::cout
-            << "Confirm password: ";
-
-        std::getline(
-            std::cin,
-            confirmation
-        );
-
-        if (password != confirmation) {
-
-            std::cout
-                << "Passwords do not match.\n";
-
-            return false;
-        }
-
-        if (username.size() >= 32) {
-
-            std::cout
-                << "Username is too long.\n";
-
-            return false;
-        }
-
-        if (createUser(
-                username,
-                password
-            )) {
-
-            std::cout << "\n";
-            std::cout
-                << "ACCOUNT CREATED!\n";
-
-            std::cout
-                << "Username: "
-                << username
-                << "\n";
-
-            return true;
-        }
-
-        std::cout
-            << "ERROR: Username may already exist "
-            << "or the database could not be written.\n";
-
-        return false;
+    void signUp() {
+        // Website/server handles signup.
     }
 
-public:
-
-    void run() {
-
-        if (!initializeDatabase()) {
-
-            std::cout
-                << "CXSDB ERROR: "
-                << "Could not initialize database.\n";
-
-            return;
-        }
-
-        // Create ROOT.CSX if this is the first run.
-        if (!ensureROOT())
-            return;
-
-        while (true) {
-
-            std::cout << "\n";
-            std::cout
-                << "============================\n";
-            std::cout
-                << "       CXSDB AUTH\n";
-            std::cout
-                << "============================\n";
-
-            std::cout
-                << "1. Login\n";
-            std::cout
-                << "2. Sign Up\n";
-            std::cout
-                << "3. Exit\n";
-
-            std::cout
-                << "\nSelect: ";
-
-            int choice;
-
-            if (!(std::cin >> choice)) {
-
-                std::cin.clear();
-
-                std::cin.ignore(
-                    std::numeric_limits<
-                        std::streamsize
-                    >::max(),
-                    '\n'
-                );
-
-                std::cout
-                    << "Invalid selection.\n";
-
-                continue;
-            }
-
-            std::cin.ignore(
-                std::numeric_limits<
-                    std::streamsize
-                >::max(),
-                '\n'
-            );
-
-            if (choice == 1) {
-
-                login();
-            }
-            else if (choice == 2) {
-
-                signUp();
-            }
-            else if (choice == 3) {
-
-                std::cout
-                    << "CXSDB AUTH CLOSED.\n";
-
-                break;
-            }
-            else {
-
-                std::cout
-                    << "Invalid selection.\n";
-            }
-        }
-    }
-};
-
-
-int main() {
-
-    CXSDB_Auth auth;
-
-    auth.run();
-
-    return 0;
 }
