@@ -26,15 +26,6 @@ function showMessage(text) {
 
 form.addEventListener("submit", async (event) => {
 
-    /*
-     * VERY IMPORTANT:
-     *
-     * Stop the browser's normal form submission.
-     *
-     * Without this, the browser can put the
-     * form values into the URL.
-     */
-
     event.preventDefault();
     event.stopPropagation();
 
@@ -95,12 +86,6 @@ form.addEventListener("submit", async (event) => {
 
     try {
 
-        /*
-         * Credentials are sent in the HTTP POST BODY.
-         *
-         * They are NOT placed in the URL.
-         */
-
         const response =
             await fetch(
                 CXSDB_SERVER + "/login",
@@ -120,6 +105,50 @@ form.addEventListener("submit", async (event) => {
             );
 
 
+        /*
+         * Read the JSON even if the HTTP
+         * status is not successful.
+         */
+
+        let data;
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            throw new Error(
+                "Invalid server response."
+            );
+        }
+
+
+        /*
+         * SERVER REPLIED WITH A LOGIN FAILURE
+         *
+         * This is NOT a connection error.
+         */
+
+        if (data.success === false) {
+
+            showMessage(
+                data.message ||
+                "Invalid username or password."
+            );
+
+            loginButton.disabled = false;
+
+            return;
+        }
+
+
+        /*
+         * HTTP ERROR WITHOUT A NORMAL
+         * LOGIN RESPONSE
+         */
+
         if (!response.ok) {
 
             throw new Error(
@@ -128,64 +157,10 @@ form.addEventListener("submit", async (event) => {
         }
 
 
-        const data =
-            await response.json();
-
-
-        /*
-         * USERNAME DOES NOT EXIST
-         */
-
-        if (
-            data.code ===
-            "ACCOUNT_NOT_FOUND"
-        ) {
-
-            showMessage(
-                "Username not found."
-            );
-
-            loginButton.disabled = false;
-
-            return;
-        }
-
-
-        /*
-         * WRONG PASSWORD
-         */
-
-        if (!data.success) {
-    showMessage(
-        data.message || "Login failed."
-    );
-
-    loginButton.disabled = false;
-    return;
-}
-
-
-        /*
-         * OTHER LOGIN FAILURE
-         */
-
-        if (!data.success) {
-
-            showMessage(
-                data.message ||
-                "Login failed."
-            );
-
-            loginButton.disabled = false;
-
-            return;
-        }
-
-
         /*
          * SUCCESS
          *
-         * Store only the account identity.
+         * Store only account identity.
          *
          * NEVER store the password.
          */
@@ -223,8 +198,7 @@ form.addEventListener("submit", async (event) => {
 
 
         /*
-         * Go to Home without putting
-         * account information in the URL.
+         * Go to Home.
          */
 
         setTimeout(() => {
