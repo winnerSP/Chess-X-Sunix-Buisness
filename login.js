@@ -235,7 +235,7 @@ form.addEventListener("submit", async (event) => {
         setTimeout(() => {
 
             window.location.href =
-                "home.html";
+                "index.html";
 
         }, 500);
 
