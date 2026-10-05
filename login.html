@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -15,115 +16,100 @@
         rel="stylesheet"
         href="login.css"
     >
+
 </head>
+
 
 <body>
 
-    <main class="login-container">
+    <div class="login-overlay">
 
-        <section class="login-box">
+        <main class="login-container">
 
-            <h1>CHESS X SUNIX</h1>
+            <section class="login-box">
 
-            <h2>Login</h2>
-
-            <p class="login-subtitle">
-                Sign in to your CHESS X SUNIX account.
-            </p>
+                <h1>CHESS X SUNIX</h1>
 
 
-            <form id="loginForm">
-
-                <!-- USERNAME -->
-
-                <label for="username">
-                    Username
-                </label>
-
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Enter your username"
-                    autocomplete="username"
-                    maxlength="31"
-                    required
+                <form
+                    id="loginForm"
+                    method="post"
                 >
-
-
-                <!-- PASSWORD -->
-
-                <label for="password">
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    autocomplete="current-password"
-                    required
-                >
-
-
-                <!-- TERMS -->
-
-                <div class="terms-row">
 
                     <input
-                        type="checkbox"
-                        id="terms"
-                        name="terms"
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Username"
+                        autocomplete="username"
+                        maxlength="31"
+                        required
                     >
 
-                    <label for="terms">
-                        I agree to the
-                        <a
-                            href="terms.html"
-                            target="_blank"
-                            rel="noopener"
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+
+                    <div class="terms-row">
+
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            name="terms"
                         >
-                            Terms & Conditions
-                        </a>
-                    </label>
 
-                </div>
+                        <label for="terms">
 
+                            I agree to the
+                            <a
+                                href="terms.html"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                Terms & Conditions
+                            </a>
 
-                <!-- LOGIN -->
+                        </label>
 
-                <button
-                    type="submit"
-                    id="loginButton"
-                >
-                    Login
-                </button>
-
-
-                <!-- CREATE ACCOUNT -->
-
-                <button
-                    type="button"
-                    id="createAccountButton"
-                >
-                    Create Account
-                </button>
-
-            </form>
+                    </div>
 
 
-            <!-- SERVER MESSAGE -->
+                    <button
+                        type="submit"
+                        id="loginButton"
+                    >
+                        Login
+                    </button>
 
-            <div
-                id="loginMessage"
-                role="status"
-                aria-live="polite"
-            ></div>
 
-        </section>
+                    <button
+                        type="button"
+                        id="createAccountButton"
+                    >
+                        Create Account
+                    </button>
 
-    </main>
+                </form>
+
+
+                <div
+                    id="loginMessage"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+            </section>
+
+        </main>
+
+    </div>
 
 
     <script src="login.js"></script>
