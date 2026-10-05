@@ -3,28 +3,38 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login | Chess X Sunix</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="login.css">
+    <title>Login | CHESS X SUNIX</title>
+
+    <link
+        rel="stylesheet"
+        href="login.css"
+    >
 </head>
 
 <body>
 
-    <div class="login-overlay">
+    <main class="login-container">
 
-        <div class="login-box">
+        <section class="login-box">
 
             <h1>CHESS X SUNIX</h1>
 
-            <p class="subtitle">
-                Login or create your account
+            <h2>Login</h2>
+
+            <p class="login-subtitle">
+                Sign in to your CHESS X SUNIX account.
             </p>
+
 
             <form id="loginForm">
 
-                <!-- Username -->
+                <!-- USERNAME -->
 
                 <label for="username">
                     Username
@@ -36,11 +46,12 @@
                     name="username"
                     placeholder="Enter your username"
                     autocomplete="username"
+                    maxlength="31"
                     required
                 >
 
 
-                <!-- Password -->
+                <!-- PASSWORD -->
 
                 <label for="password">
                     Password
@@ -56,31 +67,31 @@
                 >
 
 
-                <!-- Terms -->
+                <!-- TERMS -->
 
-                <label class="terms-row">
+                <div class="terms-row">
 
                     <input
                         type="checkbox"
-                        id="termsCheckbox"
-                        required
+                        id="terms"
+                        name="terms"
                     >
 
-                    <span>
+                    <label for="terms">
                         I agree to the
                         <a
                             href="terms.html"
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="noopener"
                         >
-                            Terms and Conditions
+                            Terms & Conditions
                         </a>
-                    </span>
+                    </label>
 
-                </label>
+                </div>
 
 
-                <!-- Login -->
+                <!-- LOGIN -->
 
                 <button
                     type="submit"
@@ -90,25 +101,29 @@
                 </button>
 
 
-                <!-- Sign Up -->
+                <!-- CREATE ACCOUNT -->
 
                 <button
                     type="button"
-                    id="signupButton"
+                    id="createAccountButton"
                 >
                     Create Account
                 </button>
 
-
-                <!-- Status -->
-
-                <p id="loginMessage"></p>
-
             </form>
 
-        </div>
 
-    </div>
+            <!-- SERVER MESSAGE -->
+
+            <div
+                id="loginMessage"
+                role="status"
+                aria-live="polite"
+            ></div>
+
+        </section>
+
+    </main>
 
 
     <script src="login.js"></script>

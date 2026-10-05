@@ -1,277 +1,241 @@
-```javascript
 const CXSDB_SERVER =
     "https://vigilant-fiesta-5vgq74r9pq7jf7jq6-8080.app.github.dev";
 
-const loginForm =
+
+const form =
     document.getElementById("loginForm");
 
-const usernameInput =
-    document.getElementById("username");
-
-const passwordInput =
-    document.getElementById("password");
-
-const termsCheckbox =
-    document.getElementById("termsCheckbox");
+const message =
+    document.getElementById("loginMessage");
 
 const loginButton =
     document.getElementById("loginButton");
 
-const signupButton =
-    document.getElementById("signupButton");
-
-const loginMessage =
-    document.getElementById("loginMessage");
+const createAccountButton =
+    document.getElementById("createAccountButton");
 
 
-// ========================================
-// BUTTON STATE
-// ========================================
-
-function updateButtons() {
-
-    const accepted =
-        termsCheckbox.checked;
-
-    loginButton.disabled =
-        !accepted;
-
-    signupButton.disabled =
-        !accepted;
+function showMessage(text) {
+    message.textContent = text;
 }
 
 
-termsCheckbox.addEventListener(
-    "change",
-    updateButtons
-);
+/*
+ * LOGIN
+ */
 
-updateButtons();
+form.addEventListener("submit", async (event) => {
 
+    event.preventDefault();
 
-// ========================================
-// LOGIN
-// ========================================
+    const username =
+        document
+            .getElementById("username")
+            .value
+            .trim();
 
-loginForm.addEventListener(
-    "submit",
-    async function (event) {
+    const password =
+        document
+            .getElementById("password")
+            .value;
 
-        event.preventDefault();
-
-
-        if (!termsCheckbox.checked) {
-
-            loginMessage.textContent =
-                "You must agree to the Terms and Conditions.";
-
-            return;
-        }
+    const terms =
+        document
+            .getElementById("terms")
+            .checked;
 
 
-        const username =
-            usernameInput.value.trim();
+    if (!terms) {
 
-        const password =
-            passwordInput.value;
+        showMessage(
+            "Please accept the Terms & Conditions."
+        );
 
-
-        if (!username || !password) {
-
-            loginMessage.textContent =
-                "Enter your username and password.";
-
-            return;
-        }
+        return;
+    }
 
 
-        loginButton.disabled = true;
-        signupButton.disabled = true;
+    if (!username || !password) {
 
-        loginMessage.textContent =
-            "Logging in...";
+        showMessage(
+            "Please enter your username and password."
+        );
 
-
-        try {
-
-            const response =
-                await fetch(
-                    CXSDB_SERVER + "/login",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            username: username,
-                            password: password
-                        })
-                    }
-                );
+        return;
+    }
 
 
-            const result =
-                await response.json();
+    loginButton.disabled = true;
+
+    showMessage(
+        "Checking account..."
+    );
 
 
-            if (
-                response.ok &&
-                result.success
-            ) {
+    try {
 
-                loginMessage.textContent =
-                    "Login successful!";
+        const response =
+            await fetch(
+                CXSDB_SERVER + "/login",
+                {
+                    method: "POST",
 
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                // Clear the password immediately.
-                passwordInput.value = "";
-
-
-                // Continue to the main website.
-                window.location.href =
-                    "index.html";
-
-            }
-            else {
-
-                loginMessage.textContent =
-                    result.message ||
-                    "Login failed.";
-
-                passwordInput.value = "";
-
-                updateButtons();
-            }
-
-        }
-        catch (error) {
-
-            console.error(
-                "CXSDB login error:",
-                error
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                }
             );
 
-            loginMessage.textContent =
-                "Unable to connect to the CXSDB server.";
 
-            passwordInput.value = "";
+        if (!response.ok) {
 
-            updateButtons();
+            throw new Error(
+                "HTTP " + response.status
+            );
         }
 
+
+        const data =
+            await response.json();
+
+
+        /*
+         * USERNAME DOES NOT EXIST
+         */
+
+        if (
+            data.code === "ACCOUNT_NOT_FOUND"
+        ) {
+
+            showMessage(
+                "Username not found."
+            );
+
+            loginButton.disabled = false;
+
+            return;
+        }
+
+
+        /*
+         * WRONG PASSWORD
+         */
+
+        if (
+            data.code === "INVALID_PASSWORD"
+        ) {
+
+            showMessage(
+                "Incorrect password."
+            );
+
+            loginButton.disabled = false;
+
+            return;
+        }
+
+
+        /*
+         * GENERAL LOGIN FAILURE
+         */
+
+        if (!data.success) {
+
+            showMessage(
+                data.message ||
+                "Login failed."
+            );
+
+            loginButton.disabled = false;
+
+            return;
+        }
+
+
+        /*
+         * LOGIN SUCCESS
+         */
+
+        if (!data.user_id) {
+
+            showMessage(
+                "Login failed: account information was not returned."
+            );
+
+            loginButton.disabled = false;
+
+            return;
+        }
+
+
+        /*
+         * Store only account identity.
+         * Never store the password.
+         */
+
+        sessionStorage.setItem(
+            "cxsdb_user_id",
+            String(data.user_id)
+        );
+
+        sessionStorage.setItem(
+            "cxsdb_username",
+            data.username || username
+        );
+
+
+        document
+            .getElementById("password")
+            .value = "";
+
+
+        showMessage(
+            "Login successful."
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "home.html";
+
+        }, 500);
+
     }
-);
+
+    catch (error) {
+
+        console.error(
+            "CXSDB LOGIN ERROR:",
+            error
+        );
 
 
-// ========================================
-// CREATE ACCOUNT
-// ========================================
+        showMessage(
+            "Unable to connect to the server."
+        );
 
-signupButton.addEventListener(
+        loginButton.disabled = false;
+    }
+
+});
+
+
+/*
+ * CREATE ACCOUNT
+ */
+
+createAccountButton.addEventListener(
     "click",
-    async function () {
+    () => {
 
-        if (!termsCheckbox.checked) {
-
-            loginMessage.textContent =
-                "You must agree to the Terms and Conditions.";
-
-            return;
-        }
-
-
-        const username =
-            usernameInput.value.trim();
-
-        const password =
-            passwordInput.value;
-
-
-        if (!username || !password) {
-
-            loginMessage.textContent =
-                "Enter a username and password.";
-
-            return;
-        }
-
-
-        signupButton.disabled = true;
-        loginButton.disabled = true;
-
-        loginMessage.textContent =
-            "Creating account...";
-
-
-        try {
-
-            const response =
-                await fetch(
-                    CXSDB_SERVER + "/signup",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            username: username,
-                            password: password,
-                            termsAccepted: true
-                        })
-                    }
-                );
-
-
-            const result =
-                await response.json();
-
-
-            if (
-                response.ok &&
-                result.success
-            ) {
-
-                loginMessage.textContent =
-                    "Account created successfully!";
-
-                passwordInput.value = "";
-
-                updateButtons();
-
-            }
-            else {
-
-                loginMessage.textContent =
-                    result.message ||
-                    "Account creation failed.";
-
-                passwordInput.value = "";
-
-                updateButtons();
-            }
-
-        }
-        catch (error) {
-
-            console.error(
-                "CXSDB signup error:",
-                error
-            );
-
-            loginMessage.textContent =
-                "Unable to connect to the CXSDB server.";
-
-            passwordInput.value = "";
-
-            updateButtons();
-        }
-
+        window.location.href =
+            "Account.html";
     }
 );
-```
