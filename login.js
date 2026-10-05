@@ -26,7 +26,18 @@ function showMessage(text) {
 
 form.addEventListener("submit", async (event) => {
 
+    /*
+     * VERY IMPORTANT:
+     *
+     * Stop the browser's normal form submission.
+     *
+     * Without this, the browser can put the
+     * form values into the URL.
+     */
+
     event.preventDefault();
+    event.stopPropagation();
+
 
     const username =
         document
@@ -55,10 +66,20 @@ form.addEventListener("submit", async (event) => {
     }
 
 
-    if (!username || !password) {
+    if (!username) {
 
         showMessage(
-            "Please enter your username and password."
+            "Please enter your username."
+        );
+
+        return;
+    }
+
+
+    if (!password) {
+
+        showMessage(
+            "Please enter your password."
         );
 
         return;
@@ -73,6 +94,12 @@ form.addEventListener("submit", async (event) => {
 
 
     try {
+
+        /*
+         * Credentials are sent in the HTTP POST BODY.
+         *
+         * They are NOT placed in the URL.
+         */
 
         const response =
             await fetch(
@@ -110,7 +137,8 @@ form.addEventListener("submit", async (event) => {
          */
 
         if (
-            data.code === "ACCOUNT_NOT_FOUND"
+            data.code ===
+            "ACCOUNT_NOT_FOUND"
         ) {
 
             showMessage(
@@ -128,7 +156,8 @@ form.addEventListener("submit", async (event) => {
          */
 
         if (
-            data.code === "INVALID_PASSWORD"
+            data.code ===
+            "INVALID_PASSWORD"
         ) {
 
             showMessage(
@@ -142,7 +171,7 @@ form.addEventListener("submit", async (event) => {
 
 
         /*
-         * GENERAL LOGIN FAILURE
+         * OTHER LOGIN FAILURE
          */
 
         if (!data.success) {
@@ -159,36 +188,34 @@ form.addEventListener("submit", async (event) => {
 
 
         /*
-         * LOGIN SUCCESS
+         * SUCCESS
+         *
+         * Store only the account identity.
+         *
+         * NEVER store the password.
          */
 
-        if (!data.user_id) {
+        if (data.user_id !== undefined) {
 
-            showMessage(
-                "Login failed: account information was not returned."
+            sessionStorage.setItem(
+                "cxsdb_user_id",
+                String(data.user_id)
             );
+        }
 
-            loginButton.disabled = false;
 
-            return;
+        if (data.username) {
+
+            sessionStorage.setItem(
+                "cxsdb_username",
+                data.username
+            );
         }
 
 
         /*
-         * Store only account identity.
-         * Never store the password.
+         * Clear the password immediately.
          */
-
-        sessionStorage.setItem(
-            "cxsdb_user_id",
-            String(data.user_id)
-        );
-
-        sessionStorage.setItem(
-            "cxsdb_username",
-            data.username || username
-        );
-
 
         document
             .getElementById("password")
@@ -200,6 +227,11 @@ form.addEventListener("submit", async (event) => {
         );
 
 
+        /*
+         * Go to Home without putting
+         * account information in the URL.
+         */
+
         setTimeout(() => {
 
             window.location.href =
@@ -208,6 +240,7 @@ form.addEventListener("submit", async (event) => {
         }, 500);
 
     }
+
 
     catch (error) {
 
@@ -233,7 +266,9 @@ form.addEventListener("submit", async (event) => {
 
 createAccountButton.addEventListener(
     "click",
-    () => {
+    (event) => {
+
+        event.preventDefault();
 
         window.location.href =
             "Account.html";
