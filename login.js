@@ -155,19 +155,14 @@ form.addEventListener("submit", async (event) => {
          * WRONG PASSWORD
          */
 
-        if (
-            data.code ===
-            "INVALID_PASSWORD"
-        ) {
+        if (!data.success) {
+    showMessage(
+        data.message || "Login failed."
+    );
 
-            showMessage(
-                "Incorrect password."
-            );
-
-            loginButton.disabled = false;
-
-            return;
-        }
+    loginButton.disabled = false;
+    return;
+}
 
 
         /*
