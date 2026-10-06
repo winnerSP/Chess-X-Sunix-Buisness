@@ -1,66 +1,87 @@
-function createUser(username) {
+/* =========================================
+   CHESS X SUNIX
+   AUTHENTICATION CONTROLLER
+========================================= */
+
+
+/*
+ * GET CURRENT USER
+ */
+
+function getCurrentUser() {
+
+    const userId =
+        sessionStorage.getItem("cxsdb_user_id");
+
+    const username =
+        sessionStorage.getItem("cxsdb_username");
+
+
+    if (!userId || !username) {
+        return null;
+    }
+
 
     return {
 
-        username: username,
+        id: userId,
 
-        rating: 800,
-
-        games: 0,
-
-        wins: 0,
-
-        losses: 0,
-
-        draws: 0
+        username: username
 
     };
 
 }
 
 
-function login() {
+/*
+ * CHECK WHETHER USER IS LOGGED IN
+ */
 
-    const input =
-        document.getElementById("username");
+function isLoggedIn() {
 
-    if (!input) {
-        return;
-    }
-
-    const username =
-        input.value.trim();
-
-    if (!username) {
-        return;
-    }
-
-
-    const user =
-        createUser(username);
-
-    saveCurrentUser(user);
-
-    const status =
-        document.getElementById("login-status");
-
-    if (status) {
-
-        status.textContent =
-            "Logged in as " + username;
-
-    }
+    return getCurrentUser() !== null;
 
 }
 
 
+/*
+ * LOGOUT
+ */
+
 function logoutUser() {
 
-    localStorage.removeItem(
-        "currentUser"
+    sessionStorage.removeItem(
+        "cxsdb_user_id"
+    );
+
+    sessionStorage.removeItem(
+        "cxsdb_username"
     );
 
     window.location.href =
         "index.html";
+
+}
+
+
+/*
+ * PROTECT A PAGE
+ *
+ * Use this on pages that require
+ * an authenticated account.
+ */
+
+function requireLogin() {
+
+    if (!isLoggedIn()) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+
+    }
+
+    return true;
 
 }
